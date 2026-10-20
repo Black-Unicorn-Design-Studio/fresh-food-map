@@ -32,6 +32,11 @@ export class SqliteStore implements Store {
         primary key (ip_hash, window_start)
       );
     `);
+    // Rows batched before markBatched() began scrubbing still carry their hash. Clearing
+    // them here, on every boot, is idempotent and costs nothing once there are none — and it
+    // is what makes the privacy policy's sentence true for a queue that predates the fix,
+    // rather than only for submissions that arrive after it.
+    this.db.exec(`update submissions set ip_hash = '' where status != 'pending' and ip_hash != ''`);
   }
 
   async enqueue(row: { id: string; payload: unknown; ipHash: string; flags: string[] }) {
@@ -52,8 +57,23 @@ export class SqliteStore implements Store {
       .all(limit) as unknown as QueueRow[];
   }
 
+  /**
+   * Marks rows batched **and forgets who sent them.**
+   *
+   * The hash rides with a pending row and nothing reads it there — rate limiting counts the
+   * `rate_limit` table, which `prune()` empties after a day. Once a submission is a pull
+   * request it is a public proposal and the queue row is bookkeeping, so the hash has no
+   * purpose left and is cleared in the same transaction that changes the status. It was kept
+   * for the life of the queue before this, which was the one place the service held who
+   * submitted what. `''` rather than `null` because the column is `not null`, and a schema
+   * migration on a live queue is a worse trade than an empty string.
+   *
+   * `src/app/privacy.tsx` promises exactly this. Changing it changes that screen too.
+   */
   async markBatched(ids: string[], prUrl: string) {
-    const stmt = this.db.prepare(`update submissions set status='batched', pr_url=? where id=?`);
+    const stmt = this.db.prepare(
+      `update submissions set status='batched', pr_url=?, ip_hash='' where id=?`
+    );
     this.db.exec('begin');
     try {
       for (const id of ids) stmt.run(prUrl, id);

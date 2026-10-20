@@ -294,6 +294,12 @@ npx eas-cli submit -p android -e production  # to Play's internal track, as a dr
 Play will not take a first upload through its API, so the very first Android build is
 uploaded by hand in the Play Console; `eas submit` works from the second on.
 
+For the store listings: the app version is `1.0.0` (`app.json`, matched by `package.json`);
+the privacy policy URL is `https://freshfoodmap.app/privacy`, which is the app's own
+`/privacy` screen; and the support URL is the repository's issue tracker.
+`ios.config.usesNonExemptEncryption` is `false` — the app uses only the system's HTTPS — so
+App Store Connect does not ask the export-compliance question on every upload.
+
 ## License
 
 Code is licensed under the **GNU AGPL-3.0-or-later** ([LICENSE](LICENSE)). In short:

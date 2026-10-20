@@ -58,7 +58,10 @@ Keep these apart. Describing an unbuilt thing as shipped is the expensive mistak
   answer to a question the reader is not yet asking. The card's root is `pointerEvents="none"`,
   which is load-bearing rather than tidy: a `View` with a background is a touch target on both
   platforms whether or not anything wants the press, and the card's own paint had grown over
-  the `✕` and was swallowing it. `Flag or update this listing` at the foot of the detail screen, a
+  the `✕` and was swallowing it. A privacy policy at `/privacy` (`src/app/privacy.tsx`), linked
+  from the list's credit line and the settings dialog through one `PrivacyLink` — the URL given
+  to App Store Connect, and **every sentence in it is a claim about the code**, so a change that
+  falsifies one edits it in the same pull request. `Flag or update this listing` at the foot of the detail screen, a
   prefilled repository issue (`reportUrl` in `src/constants/source.ts`) and deliberately not an
   intake submission, which would be dropped as a duplicate in silence; the closed tag
   vocabulary, collapsed on both the list and the map behind the sprout disc in
@@ -122,7 +125,7 @@ Keep these apart. Describing an unbuilt thing as shipped is the expensive mistak
   `data/markets.json` bundled and optionally refetched from a CDN; the
   intake service in `server/` (form → mechanical checks → queue → batching agent → pull
   request), which has already opened and merged a real one; a `node:test` suite over the pure
-  logic (schema, intake checks, batching agent, IP bucketing, geo/format/open-now, address
+  logic (schema, intake checks, batching agent, IP bucketing, how long a submission keeps its hash, geo/format/open-now, address
   geocoding, per-day hours, submit errors, boot-time env, the mark's geometry, callout
   placement, the correction-issue URL); a containerised staging deployment (Dockerfile, compose profiles,
   Caddy), which also answers for `freshfoodmap.app` — the app's two paths served, everything

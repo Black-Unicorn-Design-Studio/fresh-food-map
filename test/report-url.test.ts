@@ -13,7 +13,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, test } from 'node:test';
 
-import { SOURCE_URL, issuesEndpoint, reportUrl } from '@/constants/source';
+import { SOURCE_URL, issuesEndpoint, reportUrl, sourcePath } from '@/constants/source';
 
 const market = { id: '1f0a6a2e-8c1d-4b5e-9d2a-000000000001', name: 'Ferry Plaza Farmers Market' };
 
@@ -60,6 +60,16 @@ describe('reportUrl', () => {
     assert.equal(issuesEndpoint('https://example.org/repo/'), 'https://example.org/repo/issues/new');
     assert.equal(issuesEndpoint('https://example.org/repo'), 'https://example.org/repo/issues/new');
     assert.equal(issuesEndpoint('https://example.org/repo///'), 'https://example.org/repo/issues/new');
+  });
+
+  test('other repository paths get the same guard, from either side of the join', () => {
+    // The privacy screen links the issue list and its own history through `sourcePath`, so a
+    // trailing slash on the base or a leading one on the path must not produce `//` either.
+    assert.equal(sourcePath('issues', 'https://example.org/repo/'), 'https://example.org/repo/issues');
+    assert.equal(
+      sourcePath('/commits/main/src/app/privacy.tsx', 'https://example.org/repo'),
+      'https://example.org/repo/commits/main/src/app/privacy.tsx',
+    );
   });
 
   test('the real link never contains a doubled slash after the host', () => {

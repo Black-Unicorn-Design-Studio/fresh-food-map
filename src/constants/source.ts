@@ -30,15 +30,24 @@ export const SOURCE_URL =
  * strange renders no link rather than an unsafe one.
  */
 /**
+ * A path inside the source repository — its issues, a file's history.
+ *
+ * The one place the trailing-slash guard lives: `EXPO_PUBLIC_SOURCE_URL` is typed by a person
+ * into an env file, a trailing slash is the usual way that goes, and `…/repo//issues` is a 404
+ * rather than an error anybody would see before shipping.
+ */
+export function sourcePath(path: string, base: string = SOURCE_URL): string {
+  return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+}
+
+/**
  * The issue endpoint for a repository URL.
  *
  * Separate from `reportUrl` so the trailing-slash guard is testable without reaching into the
- * environment: `EXPO_PUBLIC_SOURCE_URL` is typed by a person into an env file, a trailing slash
- * is the usual way that goes, and `…/repo//issues/new` is a 404 rather than an error anybody
- * would see before shipping.
+ * environment (see `sourcePath`).
  */
 export function issuesEndpoint(base: string = SOURCE_URL): string {
-  return `${base.replace(/\/+$/, '')}/issues/new`;
+  return sourcePath('issues/new', base);
 }
 
 export function reportUrl(market: { id: string; name: string }): string {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { PrivacyLink } from '@/components/privacy-link';
 import { COUNTRIES, COUNTRY_LABELS, type CountryCode } from '@/constants/countries';
 import { Display, Radii, Spacing } from '@/constants/theme';
 import { spaceToPress } from '@/lib/a11y';
@@ -97,6 +98,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
               <Text style={[styles.about, { color: theme.textSecondary }]}>
                 A map of farmers markets, kept as open data that anyone can contribute to.
               </Text>
+              <PrivacyLink onNavigate={onClose} />
             </View>
 
             <Dropdown
