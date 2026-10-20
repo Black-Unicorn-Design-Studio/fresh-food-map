@@ -56,7 +56,7 @@ const SECTIONS: { heading: string; body: string[] }[] = [
     heading: 'Submitting a market',
     body: [
       'Everything you type into the submit form is published. A person reviews each submission as a public pull request on GitHub before it is added, so please leave out personal details — the note field especially is quoted as written.',
-      'To limit spam, the submission service keeps a salted hash of your IP address rather than the address itself. It is used to count submissions per hour and per day, and that count is deleted after a day. The same hash is also stored alongside your submission in the service’s queue, and is not currently deleted from there. It cannot be turned back into your address.',
+      'To limit spam, the submission service keeps a salted hash of your IP address rather than the address itself. It is used to count submissions per hour and per day, and that count is deleted after a day. The same hash is stored with your submission while it waits in the queue, and is deleted once the submission has been turned into a pull request.',
     ],
   },
   {

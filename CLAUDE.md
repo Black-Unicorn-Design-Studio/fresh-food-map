@@ -125,7 +125,7 @@ Keep these apart. Describing an unbuilt thing as shipped is the expensive mistak
   `data/markets.json` bundled and optionally refetched from a CDN; the
   intake service in `server/` (form → mechanical checks → queue → batching agent → pull
   request), which has already opened and merged a real one; a `node:test` suite over the pure
-  logic (schema, intake checks, batching agent, IP bucketing, geo/format/open-now, address
+  logic (schema, intake checks, batching agent, IP bucketing, how long a submission keeps its hash, geo/format/open-now, address
   geocoding, per-day hours, submit errors, boot-time env, the mark's geometry, callout
   placement, the correction-issue URL); a containerised staging deployment (Dockerfile, compose profiles,
   Caddy), which also answers for `freshfoodmap.app` — the app's two paths served, everything
