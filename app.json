@@ -1,12 +1,18 @@
 {
   "expo": {
     "name": "Fresh Food Map",
+    "owner": "black-unicorn-design-studio",
     "slug": "fresh-food-map",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "freshfoodmap",
     "userInterfaceStyle": "automatic",
+    "extra": {
+      "eas": {
+        "projectId": "731404cb-f674-4570-9d1f-80e586e37ae3"
+      }
+    },
     "android": {
       "package": "app.freshfoodmap",
       "adaptiveIcon": {
