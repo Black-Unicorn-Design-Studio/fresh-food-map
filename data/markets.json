@@ -1,0 +1,2456 @@
+{
+  "type": "FeatureCollection",
+  "name": "fresh-food-map-markets",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.3937,
+          37.7955
+        ]
+      },
+      "properties": {
+        "id": "1f0a6a2e-8c1d-4b5e-9d2a-000000000001",
+        "name": "Ferry Plaza Farmers Market",
+        "address": "1 Ferry Building, San Francisco, CA 94111",
+        "schedule": [
+          {
+            "day": "tue",
+            "open": "10:00",
+            "close": "14:00"
+          },
+          {
+            "day": "sat",
+            "open": "08:00",
+            "close": "14:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://foodwise.org/markets/ferry-plaza-farmers-market/",
+        "source": "manual",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/Los_Angeles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.9903,
+          40.7359
+        ]
+      },
+      "properties": {
+        "id": "1f0a6a2e-8c1d-4b5e-9d2a-000000000002",
+        "name": "Union Square Greenmarket",
+        "address": "E 17th St & Union Square W, New York, NY 10003",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "08:00",
+            "close": "18:00"
+          },
+          {
+            "day": "wed",
+            "open": "08:00",
+            "close": "18:00"
+          },
+          {
+            "day": "fri",
+            "open": "08:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sat",
+            "open": "08:00",
+            "close": "18:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.grownyc.org/greenmarket/manhattan-union-square-m",
+        "source": "manual",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.6842,
+          45.5089
+        ]
+      },
+      "properties": {
+        "id": "1f0a6a2e-8c1d-4b5e-9d2a-000000000003",
+        "name": "Portland Farmers Market at PSU",
+        "address": "SW Park Ave & SW Montgomery St, Portland, OR 97201",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "08:30",
+            "close": "14:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.portlandfarmersmarket.org/our-markets/psu/",
+        "source": "manual",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/Los_Angeles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.3844,
+          43.0747
+        ]
+      },
+      "properties": {
+        "id": "1f0a6a2e-8c1d-4b5e-9d2a-000000000004",
+        "name": "Dane County Farmers' Market",
+        "address": "Capitol Square, Madison, WI 53703",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "06:15",
+            "close": "13:45"
+          }
+        ],
+        "season_start": "04-01",
+        "season_end": "11-15",
+        "website": "https://dcfm.org",
+        "source": "manual",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/Chicago"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118.4956,
+          34.0158
+        ]
+      },
+      "properties": {
+        "id": "1f0a6a2e-8c1d-4b5e-9d2a-000000000005",
+        "name": "Santa Monica Farmers Market (Wednesday)",
+        "address": "Arizona Ave & 2nd St, Santa Monica, CA 90401",
+        "schedule": [
+          {
+            "day": "wed",
+            "open": "08:00",
+            "close": "13:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.santamonica.gov/categories/programs/farmers-markets",
+        "source": "manual",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/Los_Angeles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.4021,
+          33.9757
+        ]
+      },
+      "properties": {
+        "id": "a7184983-b2eb-4eae-a576-78c077fe5a08",
+        "name": "Athens Farmers Market at Bishop Park",
+        "address": "705 Sunset Dr, Athens, GA 30606",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "08:00",
+            "close": "12:00"
+          }
+        ],
+        "season_start": "04-01",
+        "season_end": "12-20",
+        "website": "https://athensfarmersmarket.net",
+        "source": "community",
+        "tags": [
+          "producer-owned"
+        ],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.1246,
+          34.064
+        ]
+      },
+      "properties": {
+        "id": "a476a52f-0783-47ef-bd41-a1e824a0e909",
+        "name": "Comer Farmers Market",
+        "address": "110 W South St, Comer, GA 30629",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "12:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.4116,
+          33.9509
+        ]
+      },
+      "properties": {
+        "id": "8c81da67-fed7-436c-b5a9-93222fc4d137",
+        "name": "West Broad Farmers Market",
+        "address": "1573 W Broad St, Athens, GA 30606",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "10:00",
+            "close": "13:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://athenslandtrust.org/west-broad-market-garden",
+        "source": "community",
+        "tags": [
+          "producer-owned",
+          "accepts-snap"
+        ],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.610527,
+          32.618971
+        ]
+      },
+      "properties": {
+        "id": "064c2b09-27d3-4d3f-9133-0858ea32c66c",
+        "name": "International City Farmer's Market",
+        "address": "Watson Boulevard, Warner Robins, GA 31098",
+        "schedule": [
+          {
+            "day": "thu",
+            "open": "13:00",
+            "close": "18:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.325594,
+          33.567314
+        ]
+      },
+      "properties": {
+        "id": "8c7b4c57-e5b4-4fde-b826-bde473422185",
+        "name": "Nam Dae Mun Farmers Market",
+        "address": "1940 Mount Zion Road, Morrow, GA 30260",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.281405,
+          34.705042
+        ]
+      },
+      "properties": {
+        "id": "d25904a0-82a9-45f5-9c8f-9b55a1d16f30",
+        "name": "LaFayette Farmers Market",
+        "address": "100 East Villanow Street, LaFayette, GA 30728",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "12:00"
+          }
+        ],
+        "season_start": "06-01",
+        "season_end": "08-31",
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.813212,
+          33.384067
+        ]
+      },
+      "properties": {
+        "id": "d264cdd1-eb9d-4185-bcfa-5d3e172ecdc4",
+        "name": "Coweta County Farmers Market",
+        "address": "Temple Avenue West, Newnan, GA 30263",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.412198,
+          33.964433
+        ]
+      },
+      "properties": {
+        "id": "a2332e0b-9642-4d99-ade5-f287946a4573",
+        "name": "Athens Farmers Market",
+        "address": "Sunset Drive, Athens, GA 30606",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "08:00",
+            "close": "12:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.328002,
+          34.857369
+        ]
+      },
+      "properties": {
+        "id": "84cdfe1d-517a-4deb-a351-1a4a76993379",
+        "name": "Farmer's Market",
+        "address": "East Summit Street, Blue Ridge, GA 30513",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.352333,
+          33.792315
+        ]
+      },
+      "properties": {
+        "id": "cc3904b1-4a47-49d2-9182-1b175b9e798b",
+        "name": "Morningside Farmers Market",
+        "address": "1393 North Highland Avenue Northeast, Atlanta, GA 30306",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "08:00",
+            "close": "11:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.morningsidemarket.com/",
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.826308,
+          39.271796
+        ]
+      },
+      "properties": {
+        "id": "ce6aac05-4892-5db8-8491-8ac140aecff1",
+        "name": "Breezy Willow",
+        "address": "9090 Frederick Road, Ellicott City, MD 21042",
+        "schedule": [
+          {
+            "day": "thu",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "fri",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sat",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sun",
+            "open": "10:00",
+            "close": "18:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.breezywillowfarm.com/country-market/\"",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/2081552378",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.489123,
+          39.390194
+        ]
+      },
+      "properties": {
+        "id": "309714ab-3fdc-590a-8260-566a8e92d18f",
+        "name": "Swadesh",
+        "address": "8643 Belair Road, Nottingham, MD 21236",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/3023411664",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.511506,
+          39.293975
+        ]
+      },
+      "properties": {
+        "id": "3be5d6f3-7361-55bd-8a2f-f7202f01ce63",
+        "name": "El Imperio Latin Market",
+        "address": "7715 Eastpoint Mall, Highlandtown, MD 21224",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/3026468154",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.909913,
+          39.021339
+        ]
+      },
+      "properties": {
+        "id": "9d0f397c-99ea-573e-88e8-52fc432c81fa",
+        "name": "Beltsville Farmers Market",
+        "address": "5601 Sunnyside Avenue, Beltsville, MD 20705",
+        "schedule": [
+          {
+            "day": "thu",
+            "open": "10:00",
+            "close": "14:00"
+          }
+        ],
+        "season_start": "06-01",
+        "season_end": "10-31",
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/3200110802",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.610242,
+          39.293439
+        ]
+      },
+      "properties": {
+        "id": "5c356946-341c-55d3-8226-7868fafec9ba",
+        "name": "Baltimore Farmers Market & Bazaar",
+        "address": "400 East Saratoga Street, Baltimore, MD 21202",
+        "schedule": [
+          {
+            "day": "sun",
+            "open": "07:00",
+            "close": "12:00"
+          }
+        ],
+        "season_start": "04-01",
+        "season_end": "12-31",
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/3523748306",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.949776,
+          38.966104
+        ]
+      },
+      "properties": {
+        "id": "c11573fb-0676-5053-82e1-e98e3adccd77",
+        "name": "Hyattsville Farmers Market",
+        "address": "3799 East-West Highway, Hyattsville, MD 20782",
+        "schedule": [
+          {
+            "day": "tue",
+            "open": "15:00",
+            "close": "19:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/3730920384",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.920012,
+          39.382659
+        ]
+      },
+      "properties": {
+        "id": "0640afd9-b809-5d9b-8a54-c1ffa16aa14a",
+        "name": "Buppert's / Doran's Chance Farm",
+        "address": "6914 Ridge Road, Marriottsville, MD 21104",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.buppertsfarmcsa.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/4152469079",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.354262,
+          39.111824
+        ]
+      },
+      "properties": {
+        "id": "e79b12c8-d601-5d46-8e54-1272cd9724c4",
+        "name": "Homestead Farm",
+        "address": "15604 Sugarland Road, Poolesville, MD 20837",
+        "schedule": [
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "16:00"
+          },
+          {
+            "day": "wed",
+            "open": "09:00",
+            "close": "16:00"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "16:00"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "16:00"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "16:00"
+          },
+          {
+            "day": "sun",
+            "open": "09:00",
+            "close": "16:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://homestead-farm.net/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/4427754367",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.34552,
+          39.094785
+        ]
+      },
+      "properties": {
+        "id": "07929eeb-7ed6-59bd-8d63-0049892cc845",
+        "name": "Rocklands Farm",
+        "address": "14531 Montevideo Road, Poolesville, MD 20837",
+        "schedule": [
+          {
+            "day": "fri",
+            "open": "16:00",
+            "close": "21:00"
+          },
+          {
+            "day": "sat",
+            "open": "12:00",
+            "close": "20:00"
+          },
+          {
+            "day": "sun",
+            "open": "12:00",
+            "close": "18:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.rocklandsfarmmd.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/5696685375",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.863773,
+          39.14833
+        ]
+      },
+      "properties": {
+        "id": "787b3966-46fb-5966-8f6a-5223b113a889",
+        "name": "Gorman Farm CSA",
+        "address": "10151 Gorman Road, North Laurel, MD 20723",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://gormanfarmscsa.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/5861152312",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.323948,
+          39.498678
+        ]
+      },
+      "properties": {
+        "id": "12fc5236-6723-5c4f-889a-adce32a93dbd",
+        "name": "Village Market and Cafe",
+        "address": "2105 Laurel Bush Road, Bel Air, MD 21015",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://pairingsbistro.com/market-cafe/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/6002050565",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.189905,
+          39.520958
+        ]
+      },
+      "properties": {
+        "id": "6207b013-84ad-54cf-883c-9d8ac5d4db77",
+        "name": "1-Stop Universal Market",
+        "address": "19 Aberdeen Shopping Plaza, Aberdeen, MD 21001",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/6435171933",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.164807,
+          39.509866
+        ]
+      },
+      "properties": {
+        "id": "82f8f75f-48db-5113-8188-17dc170e71ba",
+        "name": "Bayanihan Food Market",
+        "address": "25 West Bel Air Avenue, Aberdeen, MD 21001",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/6439981924",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.359988,
+          39.523889
+        ]
+      },
+      "properties": {
+        "id": "dbc2b6f7-5c9b-57dc-832c-206164dfde2a",
+        "name": "La Familia International Market",
+        "address": "112 North Tollgate Road, Bel Air, MD 21014",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/6474256779",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.803178,
+          39.602552
+        ]
+      },
+      "properties": {
+        "id": "8cd57f50-aac5-5225-8d57-4588d7318883",
+        "name": "Un Poco De Mexico",
+        "address": "801 East Pulaski Highway, Elkton, MD 21921",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/7217304915",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.131509,
+          38.313208
+        ]
+      },
+      "properties": {
+        "id": "9de73504-607f-5e9b-87e6-a90d107ab393",
+        "name": "Birch's Product Market",
+        "address": "9141 Stephen Decatur Hwy, Berlin, MD 21811",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/8980877631",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.050396,
+          39.602615
+        ]
+      },
+      "properties": {
+        "id": "38e95bdd-9dbc-5845-82ea-cb168fe8fbc2",
+        "name": "Baugher's Orchards and Farms",
+        "address": "1015 Baugher Road, Westminster, MD 21158",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://baughers.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/9014980311",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.610473,
+          39.351658
+        ]
+      },
+      "properties": {
+        "id": "be479993-aaa1-5197-8323-06c9a9ba71d3",
+        "name": "Govanstowne Farmers' Market",
+        "address": "5104 York Road, Baltimore, MD 21212",
+        "schedule": [
+          {
+            "day": "wed",
+            "open": "15:00",
+            "close": "18:00"
+          }
+        ],
+        "season_start": "06-01",
+        "season_end": "09-30",
+        "website": "https://govansmarket.weebly.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/9125465702",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.486447,
+          39.43552
+        ]
+      },
+      "properties": {
+        "id": "948b3619-cff4-51a9-825a-00db9bdedaf5",
+        "name": "Weber's Peachberry Farm",
+        "address": "11409 Harford Road, Glen Arm, MD 21057",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.weberscidermillfarm.com/webers-farm-directions-to-pyo.htm",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/10058443903",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.311047,
+          39.698692
+        ]
+      },
+      "properties": {
+        "id": "07da7074-4fad-55cb-8727-154fd2f5643a",
+        "name": "Highview Farms Meat Market",
+        "address": "1555 Kerr Road, Whiteford, MD 21160",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/11622265198",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.277194,
+          39.468107
+        ]
+      },
+      "properties": {
+        "id": "1ca5fa27-4c73-5104-8ced-f749be0787fe",
+        "name": "Widespread Country Market",
+        "address": "11037 Liberty Road, Frederick, MD 21701",
+        "schedule": [
+          {
+            "day": "wed",
+            "open": "10:00",
+            "close": "19:00"
+          },
+          {
+            "day": "thu",
+            "open": "10:00",
+            "close": "19:00"
+          },
+          {
+            "day": "fri",
+            "open": "10:00",
+            "close": "20:00"
+          },
+          {
+            "day": "sat",
+            "open": "10:00",
+            "close": "20:00"
+          },
+          {
+            "day": "sun",
+            "open": "10:00",
+            "close": "17:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/12213019414",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.271877,
+          38.746446
+        ]
+      },
+      "properties": {
+        "id": "f1fb0581-46a0-5b92-8fa6-56d96ba7ca08",
+        "name": "Greensward Farm",
+        "address": "7153 Cooper Point Road, Bozman, MD 21612",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/12233579963",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.040075,
+          39.468787
+        ]
+      },
+      "properties": {
+        "id": "f983dd03-f5cd-565c-862f-27fff8d6ad99",
+        "name": "Salem Bottom Provisions",
+        "address": "1245 Donlar Dr, Westminster, MD 21157",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.facebook.com/profile.php?id=61550021187480&mibextid=LQQJ4d",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/13188779797",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.298441,
+          38.975825
+        ]
+      },
+      "properties": {
+        "id": "88402b28-f3a6-5958-8678-a28ba46df1d2",
+        "name": "Kent Island Farmers' Market",
+        "address": "1169 Shopping Center Road, Stevensville, MD 21666",
+        "schedule": [
+          {
+            "day": "thu",
+            "open": "15:30",
+            "close": "18:00"
+          },
+          {
+            "day": "thu",
+            "open": "15:30",
+            "close": "17:30"
+          }
+        ],
+        "season_start": "01-01",
+        "season_end": "03-31",
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/13788493897",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.911172,
+          38.62738
+        ]
+      },
+      "properties": {
+        "id": "0ba187eb-47bc-5937-89ff-c3b2f2daf090",
+        "name": "My Mustard Seed",
+        "address": "3000 Festival Way, Waldorf, MD 20601",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "13:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.my-mustard-seed.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/13856375007",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.240622,
+          39.388303
+        ]
+      },
+      "properties": {
+        "id": "dcb6462e-b6c7-5ac5-83f5-d2eceb3203e6",
+        "name": "England Acres Farm & Market",
+        "address": "5620 Detrick Road, Mount Airy, MD 21771",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "tue",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "wed",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "thu",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "fri",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sat",
+            "open": "10:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sun",
+            "open": "10:00",
+            "close": "18:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.englandacresfarmandmarket.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/14008059485",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.278684,
+          39.573282
+        ]
+      },
+      "properties": {
+        "id": "97a96181-0d13-5d69-8f88-0608d9d8526f",
+        "name": "Glade Link Farms",
+        "address": "12270 Woodsboro Pike, Keymar, MD 21757",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.gladelink.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/14132068850",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.092105,
+          38.981092
+        ]
+      },
+      "properties": {
+        "id": "294419ab-66db-53a4-875d-fac40fe102da",
+        "name": "Montgomery Farm Women’s Co-operative Market",
+        "address": "7155 Wisconsin Avenue, Bethesda, MD 20814",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/117446595",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.102856,
+          39.314704
+        ]
+      },
+      "properties": {
+        "id": "f47d6bdd-07d9-59b0-8e33-01d19543e984",
+        "name": "Larriland Farm",
+        "address": "2415 Woodbine Road, Woodbine, MD 21797",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/179185240",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.388566,
+          39.165618
+        ]
+      },
+      "properties": {
+        "id": "a8e385ab-3363-5358-8b4d-6d18150e3113",
+        "name": "Lewis Orchards",
+        "address": "18901 Peach Orchard Road, Dickerson, MD 20842",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "wed",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sun",
+            "open": "09:00",
+            "close": "17:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.lewisorchardfarmmarket.com",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/283199578",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.535599,
+          39.407067
+        ]
+      },
+      "properties": {
+        "id": "481be9f9-7306-5da7-82da-673fcec06fe2",
+        "name": "Weber's Cider Mill Farm",
+        "address": "2526 Proctor Lane, Parkville, MD 21234",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.weberscidermillfarm.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/298705439",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.540934,
+          39.376116
+        ]
+      },
+      "properties": {
+        "id": "595ce332-d5ba-51a9-8268-01263fdaef28",
+        "name": "George's Farm Market",
+        "address": "7956 Harford Road, Parkville, MD 21234",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "08:00",
+            "close": "17:00"
+          },
+          {
+            "day": "tue",
+            "open": "08:00",
+            "close": "17:00"
+          },
+          {
+            "day": "wed",
+            "open": "08:00",
+            "close": "17:00"
+          },
+          {
+            "day": "thu",
+            "open": "08:00",
+            "close": "17:00"
+          },
+          {
+            "day": "fri",
+            "open": "08:00",
+            "close": "17:00"
+          },
+          {
+            "day": "sat",
+            "open": "08:00",
+            "close": "17:00"
+          },
+          {
+            "day": "sun",
+            "open": "08:00",
+            "close": "17:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/298713773",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.483773,
+          39.304835
+        ]
+      },
+      "properties": {
+        "id": "86e570a2-2bc1-53ac-82f5-78c422626191",
+        "name": "Fruitland",
+        "address": "106 Eastern Boulevard, Essex, MD 21221",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/298907959",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.61332,
+          39.276808
+        ]
+      },
+      "properties": {
+        "id": "55db36bd-0a2f-5d79-8deb-d3af51d738fb",
+        "name": "Cross Street Market",
+        "address": "1065 South Charles Street, Baltimore, MD 21230",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.bpmarkets.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/338550715",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.790582,
+          39.186799
+        ]
+      },
+      "properties": {
+        "id": "f264a8e1-d97d-55b3-8e27-1a67a4b75391",
+        "name": "Frank's Produce & Greenhouse",
+        "address": "6686 Old Waterloo Road, Elkridge, MD 21075",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/351018909",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.421082,
+          38.247904
+        ]
+      },
+      "properties": {
+        "id": "b7f5c161-c96d-50b8-8e0a-8c3dc9b8fc81",
+        "name": "Homegrown Farm Market",
+        "address": "21078 Three Notch Road, Lexington Park, MD 20653",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.facebook.com/homegrownfarmmarket/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/461435626",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.882286,
+          38.94211
+        ]
+      },
+      "properties": {
+        "id": "2c9eced7-e1ca-5a97-8499-2de7df25f3c0",
+        "name": "Connelly's Market",
+        "address": "480 Ridgely Road, Ridgely, MD 21660",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/502913102",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.310135,
+          39.444476
+        ]
+      },
+      "properties": {
+        "id": "c38ff1b2-7cde-5cf6-8f0e-d032ca85945c",
+        "name": "Jones Family Farm Market",
+        "address": "2100 Philadelphia Road, Edgewood, MD 21040",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://jonesproducefarm.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/625347269",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.324398,
+          39.591666
+        ]
+      },
+      "properties": {
+        "id": "3d3cf599-164b-58e5-805e-1f641e37638c",
+        "name": "J's Farm Market",
+        "address": "2115 Waverly Drive, Bel Air, MD 21015",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://jsfarmmarket.com",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/717787925",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.858309,
+          38.898144
+        ]
+      },
+      "properties": {
+        "id": "7aa8fc27-9f06-5ca2-8914-7e31f6e97e44",
+        "name": "Clayton Farms",
+        "address": "24290 Shore Highway, Denton, MD 21629",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/721780736",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.259011,
+          39.540261
+        ]
+      },
+      "properties": {
+        "id": "61c97f9b-ecfd-52f9-818f-e0fbc238a028",
+        "name": "Brad's Farm Market",
+        "address": "550 Asbury Road, Churchville, MD 21028",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://bradsfarmmarket.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/728250373",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.233095,
+          39.541373
+        ]
+      },
+      "properties": {
+        "id": "de171a08-1373-554d-88be-c6505bef3a5e",
+        "name": "Lohr's Orchard Farm Market",
+        "address": "3301 Churchville Road, Aberdeen, MD 21001",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "08:30",
+            "close": "18:00"
+          },
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "wed",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sun",
+            "open": "09:30",
+            "close": "17:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.lohrsorchard.com/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/841514449",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.701453,
+          39.664969
+        ]
+      },
+      "properties": {
+        "id": "6430e84f-7328-566e-81c0-5d9a8a43ed93",
+        "name": "Pennsylvania Dutch Market",
+        "address": "1583 Potomac Avenue, Hagerstown, MD 21742",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/1334648081",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.420708,
+          39.367581
+        ]
+      },
+      "properties": {
+        "id": "6ae94763-52e9-5971-8f50-34996133369d",
+        "name": "Mountain Valley Produce",
+        "address": "904 Wes White Road, Oakland, MD 21550",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "10:00",
+            "close": "13:00"
+          },
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "wed",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "18:00"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "15:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.mtvalleyproduce.com",
+        "source": "osm",
+        "tags": [
+          "organic-focus"
+        ],
+        "source_ref": "way/1417570437",
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.92114,
+          39.074442
+        ]
+      },
+      "properties": {
+        "id": "b5c5edfb-dd5d-48bd-b4ca-2dd4e809015f",
+        "name": "Gunpowder Farm Market",
+        "address": "12610 Old Gunpowder Rd, Beltsville, MD 20705",
+        "schedule": [
+          {
+            "day": "sat",
+            "open": "10:00",
+            "close": "14:00"
+          },
+          {
+            "day": "sun",
+            "open": "10:00",
+            "close": "14:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.93218,
+          39.115109
+        ]
+      },
+      "properties": {
+        "id": "7ff8360b-5455-4f1b-9b60-249eb74a3abc",
+        "name": "Sprouts Farmers Market",
+        "address": "15793 Old Columbia Pike, Burtonsville, MD 20866",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "07:00",
+            "close": "22:00"
+          },
+          {
+            "day": "tue",
+            "open": "07:00",
+            "close": "22:00"
+          },
+          {
+            "day": "wed",
+            "open": "07:00",
+            "close": "22:00"
+          },
+          {
+            "day": "thu",
+            "open": "07:00",
+            "close": "22:00"
+          },
+          {
+            "day": "fri",
+            "open": "07:00",
+            "close": "22:00"
+          },
+          {
+            "day": "sat",
+            "open": "07:00",
+            "close": "22:00"
+          },
+          {
+            "day": "sun",
+            "open": "07:00",
+            "close": "22:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "community",
+        "tags": [
+          "grocery-store",
+          "indoor",
+          "organic-focus"
+        ],
+        "source_ref": null,
+        "active": true,
+        "country": "US",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.172267,
+          53.462418
+        ]
+      },
+      "properties": {
+        "id": "1ba2a264-3d55-5d10-8782-c501bc9f49b2",
+        "name": "Gorton Market",
+        "address": "Gorton District Centre, Garratt Way, Manchester M18 8LD",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "09:00",
+            "close": "17:30"
+          },
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "17:30"
+          },
+          {
+            "day": "wed",
+            "open": "09:00",
+            "close": "17:30"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "17:30"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "17:30"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "17:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/1343810528",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.288744,
+          53.48806
+        ]
+      },
+      "properties": {
+        "id": "b765d649-7f28-5fc1-83a7-3055c3ba3d65",
+        "name": "Salford Market",
+        "address": "1a Market Way, Salford M6 5JA",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "07:30",
+            "close": "17:30"
+          },
+          {
+            "day": "tue",
+            "open": "07:30",
+            "close": "17:30"
+          },
+          {
+            "day": "wed",
+            "open": "07:30",
+            "close": "17:30"
+          },
+          {
+            "day": "thu",
+            "open": "07:30",
+            "close": "17:30"
+          },
+          {
+            "day": "fri",
+            "open": "07:30",
+            "close": "17:30"
+          },
+          {
+            "day": "sat",
+            "open": "07:30",
+            "close": "17:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://salfordshoppingcentre.com/market/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/256508385",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.351938,
+          53.448984
+        ]
+      },
+      "properties": {
+        "id": "03656f57-7fa1-5af9-8132-2416ee077efe",
+        "name": "Urmston Market Hall",
+        "address": "5 Railway Road, Manchester",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/491981252",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.112474,
+          53.541533
+        ]
+      },
+      "properties": {
+        "id": "939674aa-0812-5b95-8b16-d6dc89ad3ebc",
+        "name": "The Market",
+        "address": "The Market, Parliament Square, Oldham OL1 1AS",
+        "schedule": [
+          {
+            "day": "mon",
+            "open": "09:00",
+            "close": "17:00"
+          },
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "17:00"
+          },
+          {
+            "day": "wed",
+            "open": "09:00",
+            "close": "17:00"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "17:00"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "17:00"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "17:00"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://thespindles.co.uk/the-market/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/13727664618",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.004542,
+          53.535531
+        ]
+      },
+      "properties": {
+        "id": "f472e4af-1631-5a45-8d3e-d7180ea411bd",
+        "name": "Harrops",
+        "address": "135 Chew Valley Road, Greenfield, Oldham OL3 7JN",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/1025151229",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.033298,
+          53.558706
+        ]
+      },
+      "properties": {
+        "id": "72abd4ee-fed5-5fce-87cb-5a5f7139dab0",
+        "name": "Albion Farm Shop",
+        "address": "Albion Farm, Oldham Road, Delph, Oldham OL3 5RQ",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.albionfarmshop.co.uk/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/1087252868",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.677176,
+          53.603418
+        ]
+      },
+      "properties": {
+        "id": "e07ce42a-21bb-5dc5-82cf-7432dd0bf393",
+        "name": "Langtree Farm Shop",
+        "address": "Langtree Old Hall Farm, Preston Road, Wigan WN6 0QA",
+        "schedule": [
+          {
+            "day": "wed",
+            "open": "10:00",
+            "close": "17:00"
+          },
+          {
+            "day": "thu",
+            "open": "10:00",
+            "close": "17:00"
+          },
+          {
+            "day": "fri",
+            "open": "10:00",
+            "close": "17:00"
+          },
+          {
+            "day": "sat",
+            "open": "10:00",
+            "close": "17:00"
+          },
+          {
+            "day": "sun",
+            "open": "10:00",
+            "close": "12:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/901974504",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.156632,
+          53.411502
+        ]
+      },
+      "properties": {
+        "id": "388acc4e-ede7-5b8a-89d8-8eb017df2cd0",
+        "name": "Stockport Market",
+        "address": "Market Hall, Market Place, Stockport SK1 1ES",
+        "schedule": [
+          {
+            "day": "tue",
+            "open": "09:00",
+            "close": "16:30"
+          },
+          {
+            "day": "thu",
+            "open": "09:00",
+            "close": "16:30"
+          },
+          {
+            "day": "fri",
+            "open": "09:00",
+            "close": "16:30"
+          },
+          {
+            "day": "sat",
+            "open": "09:00",
+            "close": "16:30"
+          }
+        ],
+        "season_start": null,
+        "season_end": null,
+        "website": "https://www.thestockportmarket.co.uk/",
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/28028583",
+        "active": true,
+        "country": "GB",
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.742441,
+          18.014732
+        ]
+      },
+      "properties": {
+        "id": "89fc0a14-3b68-5f50-8ba6-21f998462726",
+        "name": "Papine Market",
+        "address": "Papine Market Road, St. Andrew",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/8079332235",
+        "active": true,
+        "country": "JM",
+        "timezone": "America/Jamaica"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.801899,
+          18.013152
+        ]
+      },
+      "properties": {
+        "id": "ce54ff10-4123-5f20-8a4c-33a9f3cbe791",
+        "name": "Mid Town Farmer's Market",
+        "address": "Molynes Road, Kingston",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/375244414",
+        "active": true,
+        "country": "JM",
+        "timezone": "America/Jamaica"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.508273,
+          18.038665
+        ]
+      },
+      "properties": {
+        "id": "240d5664-3204-57f0-8ea4-ac90a206d60c",
+        "name": "Trading Place Ltd.",
+        "address": "25 Manchester Road, Mandeville",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "node/3762929240",
+        "active": true,
+        "country": "JM",
+        "timezone": "America/Jamaica"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.508277,
+          18.038706
+        ]
+      },
+      "properties": {
+        "id": "8df5278f-9293-56ae-8f96-433cb963ed25",
+        "name": "Dormac's",
+        "address": "Manchester Road, Mandeville",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/372740488",
+        "active": true,
+        "country": "JM",
+        "timezone": "America/Jamaica"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.111469,
+          17.938493
+        ]
+      },
+      "properties": {
+        "id": "23e44dcd-a6ad-54b8-8a62-07968a2836ef",
+        "name": "Old Harbour Market",
+        "address": "East Street, Old Harbour",
+        "schedule": [],
+        "season_start": null,
+        "season_end": null,
+        "website": null,
+        "source": "osm",
+        "tags": [],
+        "source_ref": "way/374159751",
+        "country": "JM",
+        "timezone": "America/Jamaica",
+        "active": true
+      }
+    }
+  ]
+}

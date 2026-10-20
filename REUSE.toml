@@ -1,0 +1,28 @@
+version = 1
+SPDX-PackageName = "Fresh Food Map"
+SPDX-PackageSupplier = "easyalien <129633006+easyalien@users.noreply.github.com>"
+SPDX-PackageDownloadLocation = "https://github.com/Black-Unicorn-Design-Studio/fresh-food-map"
+
+# The code. AGPL-3.0-or-later, stated once here rather than as a header in every
+# file — the REUSE specification treats a path declaration as equivalent, and 45
+# near-identical banners would be noise in a repo this size.
+[[annotations]]
+path = ["src/**", "scripts/**", "server/**", "*.json", "*.js", "*.ts", "*.md"]
+SPDX-FileCopyrightText = "Fresh Food Map contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# The dataset is NOT under the code licence, and this is the load-bearing
+# distinction in the whole file. Market records are facts gathered from public
+# open data; OpenStreetMap-derived records carry ODbL obligations that travel
+# with them regardless of what the surrounding code is licensed as. A forker who
+# closes their own fork still owes ODbL on these rows.
+[[annotations]]
+path = ["data/markets.json"]
+SPDX-FileCopyrightText = "OpenStreetMap contributors and public open-data sources"
+SPDX-License-Identifier = "ODbL-1.0"
+
+# Generated from the bundled Fraunces TTF; the mark itself is project branding.
+[[annotations]]
+path = ["assets/images/**"]
+SPDX-FileCopyrightText = "Fresh Food Map contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"

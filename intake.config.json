@@ -1,0 +1,24 @@
+{
+  "$comment": "Policy for the submission intake service. Committed on purpose: changing a spam threshold should be a pull request someone can object to, not something that happened on a server. docs/trd.md §4.",
+
+  "batch_size": 5,
+  "min_seconds_to_submit": 2,
+
+  "rate_limit": {
+    "per_ip_per_hour": 5,
+    "per_ip_per_day": 20
+  },
+
+  "dedupe": {
+    "$comment": "Matches scripts/validate-data.ts, which rejects same-name-within-100m at merge time. Catching it at intake means telling the submitter, instead of failing CI on a pull request nobody can fix.",
+    "radius_m": 100
+  },
+
+  "retention_days": {
+    "rate_limit": 1,
+    "rejected": 30
+  },
+
+  "$flags": "Soft holds reach the pull request flagged; hard fails are dropped without a trace — nothing tallies them. Never the reverse — a wrong accept costs a review comment, a wrong reject is a silent deletion.",
+  "flag_for_review": ["no_website", "no_schedule", "unreachable_website", "near_duplicate"]
+}

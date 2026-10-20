@@ -1,0 +1,66 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+# What Caddy actually serves: dist/ rsynced into a directory the build never deletes.
+web/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env
+.env*.local
+# The staging deployment's env file: INTAKE_IP_SALT and GITHUB_TOKEN live in it.
+# Neither of the rules above matches this name — `.env*.local` does not — so without
+# this line a `git add -A` on the VPS stages the token. `.env.staging.example` is not
+# matched (the pattern has no wildcard) and stays committed, which is the point.
+.env.staging
+
+# local tooling
+.playwright-mcp/
+.claude/settings.local.json
+
+# typescript
+*.tsbuildinfo
+
+example
+
+# generated native folders
+/ios
+/android
+
+# Generated at build time from data/markets.json (see build:web)
+public/markets.json
+
+# Intake queue — operational state, never canonical (server/README.md)
+intake.db
+intake.db-*
+
+# Local-only workspace. Never committed, never published — see private/README.md.
+# Anything here is invisible to git, including to a `git add -A`.
+private/

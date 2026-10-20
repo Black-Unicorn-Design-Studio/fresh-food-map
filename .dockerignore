@@ -1,0 +1,92 @@
+# What may reach the build daemon. The Dockerfile copies explicit paths rather than
+# `COPY . .`, so this file is not what decides the image contents — it decides what
+# leaves this machine at all. Two jobs: keep credentials and local-only state out of a
+# context that gets uploaded and cached, and stop a ~700 MB checkout being tarred up on
+# every build of a service whose own source is a few dozen kilobytes.
+
+# Secrets. .env holds INTAKE_IP_SALT and GITHUB_TOKEN on a development machine; both
+# belong to the operator's env file on the VPS and to no image, ever. Excluded from the
+# context rather than merely uncopied, so no future COPY can pick one up by accident.
+.env
+.env.*
+!.env.example
+
+# Local-only workspace — invisible to git, and it must be invisible here for the same
+# reason (private/README.md).
+private/
+
+# The intake queue from a local run. Operational state, never canonical: baking one in
+# would ship somebody's pending submission and their hashed IP into a public image, and
+# in sqlite mode the container would then start against a stale queue instead of the
+# volume. Three files, because WAL mode.
+intake.db
+intake.db-*
+
+# Reinstalled from the lockfile inside the image. Copying a host tree in would also
+# import darwin/arm64 binaries into a linux/amd64 image.
+node_modules/
+
+# History and CI config. .git is the largest thing here after node_modules and the
+# image needs none of it — server/batch.ts talks to the GitHub API, not to a checkout.
+.git/
+.github/
+.gitignore
+
+# Expo/web build artefacts. dist/ in particular is the static export that Caddy serves
+# from a host bind mount; it must not also exist inside the API image, where it could
+# only ever be a stale second copy.
+dist/
+web/
+web-build/
+.expo/
+expo-env.d.ts
+public/markets.json
+.metro-health-check*
+*.tsbuildinfo
+
+# The app. Nothing here is imported by server/index.ts or server/batch.ts, and
+# react-native must not sit anywhere behind a module a Node server loads. src/lib and
+# src/constants are the only two subtrees the Dockerfile copies, and they stay in.
+src/app/
+src/components/
+src/hooks/
+src/types/
+src/global.css
+assets/
+ios/
+android/
+.kotlin/
+
+# Tooling, docs and prose. Read on GitHub, not in a container. `*.md` matches top-level
+# files only — .dockerignore patterns do not cross a slash — so server/README.md rides
+# along inside server/, which is where an operator in a shell would look for it.
+.claude/
+.vscode/
+.playwright-mcp/
+test/
+docs/
+*.md
+LICENSE
+REUSE.toml
+eslint.config.js
+app.json
+
+# Compose and its example env: the deployment describes the image, the image does not
+# contain the deployment.
+compose.yaml
+docker-compose.yml
+Caddyfile
+Dockerfile
+.dockerignore
+
+# Editor and OS noise.
+.DS_Store
+*.pem
+*.key
+*.p8
+*.p12
+*.jks
+*.mobileprovision
+npm-debug.*
+yarn-debug.*
+yarn-error.*

@@ -1,0 +1,330 @@
+# Staging stack for a Hostinger VPS: the static web export and the intake service behind one
+# Caddy, on one host, with TLS.
+#
+#   docker compose --env-file .env.staging --profile persistent up -d --build   # normal mode
+#   docker compose --env-file .env.staging --profile ephemeral  up -d --build   # no-volume mode
+#
+# `--env-file` is not optional. Compose reads `.env` automatically and nothing else, so
+# without the flag every ${...} below is empty; the required ones abort the run rather than
+# starting a half-configured stack. Copy `.env.staging.example` to `.env.staging` first.
+#
+# Bare `docker compose up` starts NOTHING — every service here belongs to a profile. That is
+# deliberate: there is no default mode, because "which store is this box running" is the
+# question the whole staging environment exists to answer, and a default would let you stop
+# asking it.
+#
+# WHY TWO `intake` SERVICES. The two modes differ in whether a volume is mounted at all, and
+# Compose cannot attach a volume conditionally — a service either declares one or it does
+# not. So there are two service definitions, one per profile, and the ephemeral one carries
+# the network alias `intake`. Both modes therefore answer to `intake:8787` on the compose
+# network, which is what the Caddyfile proxies to; only one of them is ever running.
+#
+# SWITCHING MODES: BRING THE OTHER ONE DOWN FIRST.
+#
+#   docker compose --env-file .env.staging --profile persistent down
+#   docker compose --env-file .env.staging --profile ephemeral  up -d
+#
+# `up` with a profile does not stop services that profile excludes — they are not orphans,
+# they are simply not selected, and Compose leaves them running. Left to itself that is the
+# one way this file could half-work: both intake containers up at once, both answering to
+# the name `intake` on this network (one by service name, one by alias), Docker's resolver
+# handing Caddy whichever it likes, and submissions landing in the sqlite queue or the
+# GitHub queue at random — with nothing erroring and both containers healthy.
+#
+# So both carry the SAME `container_name`, which makes that impossible rather than merely
+# discouraged. The second `up` fails with `Conflict. The container name
+# "/fresh-food-map-staging-intake" is already in use`, and no container is created. Loud,
+# immediate, and it names the thing that is wrong. The cost is that switching modes really
+# does need a `down` first — `stop` leaves the container in place and the name taken — which
+# is the behaviour the commands above already describe.
+#
+# The service is never published to the host. Caddy is the only route in, which is what makes
+# INTAKE_TRUSTED_PROXY_HEADER meaningful rather than a hole — see the comment on it below.
+
+name: fresh-food-map-staging
+
+# ---------------------------------------------------------------------------------------
+# Shared by every container that runs the service code.
+# ---------------------------------------------------------------------------------------
+x-intake-image: &intake-image
+  build:
+    context: .
+    dockerfile: Dockerfile
+  # Named so the four service definitions below share one build instead of four.
+  image: fresh-food-map-intake:staging
+  # server/config.ts resolves intake.config.json against process.cwd(), and server/checks.ts
+  # reads data/markets.json the same way. Restated here rather than trusted to the Dockerfile
+  # because the failure is split: a wrong cwd kills the process at import (config) but the
+  # dataset is only read on the first real submission, so the container can start, pass its
+  # healthcheck, and 500 on the first person who uses it.
+  working_dir: /app
+
+x-intake-service: &intake-service
+  <<: *intake-image
+  restart: unless-stopped
+  # Not `always`. Comparing the two modes means deliberately stopping one stack and bringing
+  # the other up, and `always` resurrects containers you meant to leave down.
+  expose:
+    - "8787"
+  healthcheck:
+    # GET /health returns {"ok":true} (server/index.ts). Probed with node rather than curl or
+    # wget because node is the one binary the image is guaranteed to have — tsx runs the
+    # TypeScript directly, so there is no build output and no reason for the image to carry a
+    # shell toolchain.
+    #
+    # This deliberately overrides the image's own HEALTHCHECK, whose 10s start_period is too
+    # short for the ephemeral profile: that store's init() creates the queue branch over the
+    # GitHub API before listening. Caddy gates on this, so a too-eager probe would fail the
+    # whole stack on a slow API call.
+    #
+    # A pass means "listening", not "correctly configured". It is stronger than it looks
+    # because assertServiceEnv() runs before listen() — a missing salt, or a missing token
+    # under INTAKE_STORE=github, never reaches healthy. It says nothing about whether the
+    # token has the rights it needs; only a batch run finds that out.
+    test:
+      - CMD
+      - node
+      - -e
+      - "fetch('http://127.0.0.1:8787/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+    interval: 10s
+    timeout: 3s
+    retries: 6
+    # Generous because the ephemeral store's init() makes GitHub API calls before the socket
+    # ever listens: it reads the queue branch and cuts it from the base branch if missing.
+    start_period: 30s
+
+x-intake-env: &intake-env
+  PORT: "8787"
+  INTAKE_IP_SALT: ${INTAKE_IP_SALT:?set INTAKE_IP_SALT in .env.staging (openssl rand -hex 32) — see .env.staging.example}
+  # SECURITY-CRITICAL, and the one setting here whose absence is silent. Behind a proxy the
+  # socket address is Caddy's, so with this unset every submitter on the internet shares one
+  # rate-limit bucket: five submissions and the sixth person is locked out, and the seventh,
+  # and so on — a shared-fate outage that looks like the limiter working.
+  #
+  # Trusting X-Forwarded-For is only safe because nothing but Caddy can reach 8787 — there is
+  # no `ports:` on this service — and because of what Caddy does with the header. Its global
+  # `trusted_proxies` defaults to trusting no proxies, so a client-supplied X-Forwarded-For
+  # is DISCARDED, not extended: the intake service receives a header containing exactly one
+  # address, the peer Caddy saw. clientIp() in server/client-ip.ts takes the rightmost entry,
+  # which is that address. (Rightmost is also correct under the append behaviour Caddy would
+  # switch to if `trusted_proxies` were ever configured — anything a client injected sits to
+  # the left of what the proxy adds — so the two agree either way. See the Caddyfile.)
+  #
+  # Publish 8787 to the host and that reasoning collapses: anyone could then send the header
+  # directly and pick their own rate-limit bucket per request.
+  INTAKE_TRUSTED_PROXY_HEADER: X-Forwarded-For
+
+x-github-env: &github-env
+  GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+  GITHUB_REPO: ${GITHUB_REPO:-Black-Unicorn-Design-Studio/fresh-food-map}
+  # Staging pull requests target `staging`, never `main`. The token must NOT be able to merge
+  # into it — Contents write alone lets this commit straight to the base branch, publishing
+  # markets no person ever read. Protect the branch; see .env.staging.example.
+  GITHUB_BASE_BRANCH: ${GITHUB_BASE_BRANCH:-staging}
+
+services:
+  # =======================================================================================
+  # PERSISTENT — INTAKE_STORE=sqlite, queue on a named volume. The normal mode.
+  # =======================================================================================
+  intake:
+    <<: *intake-service
+    profiles: ["persistent"]
+    # Shared with intake-ephemeral on purpose — see SWITCHING MODES at the top. Docker
+    # refuses to create a second container under a name already taken, so the two modes
+    # cannot be running at the same time and Caddy can never be routed to the wrong queue.
+    container_name: fresh-food-map-staging-intake
+    # No `command:`. The image's CMD is the exec form `node --experimental-sqlite --import
+    # tsx server/index.ts`, running under a tini ENTRYPOINT so that `docker stop` is not a
+    # ten-second wait followed by SIGKILL. Node installs no SIGTERM handler and the kernel
+    # drops default-disposition signals aimed at PID 1, so neither `npm run intake` nor a
+    # bare exec-form node is enough on its own — the init is what makes the signal land.
+    # Overriding CMD with `npm run intake` here would put npm in the process tree for no
+    # gain; the flags are already identical.
+    environment:
+      <<: *intake-env
+      INTAKE_STORE: sqlite
+      # Must land on the volume below. Left at its default the queue would sit on the
+      # container's writable layer, where `up --build` silently discards every pending
+      # submission and resets every rate-limit counter without erroring.
+      INTAKE_DB_PATH: /data/intake.db
+      # No GITHUB_TOKEN, deliberately. In this mode the service only writes SQLite; the token
+      # is the batch one-shot's business. The internet-facing container holds no credential
+      # that can write to the repository, which is the security advantage this mode has over
+      # the ephemeral one.
+    volumes:
+      - intake-data:/data
+
+  # =======================================================================================
+  # EPHEMERAL — INTAKE_STORE=github, no volume anywhere. The container keeps nothing.
+  # =======================================================================================
+  intake-ephemeral:
+    <<: *intake-service
+    profiles: ["ephemeral"]
+    # The same name the persistent service claims. This is the interlock: bringing this
+    # profile up without taking the other one down fails on the name, instead of quietly
+    # putting two queues behind one hostname.
+    container_name: fresh-food-map-staging-intake
+    networks:
+      default:
+        # So `reverse_proxy intake:8787` in the Caddyfile resolves in this profile too.
+        aliases:
+          - intake
+    environment:
+      <<: [*intake-env, *github-env]
+      INTAKE_STORE: github
+      # Distinct from any production queue branch on purpose: staging traffic writing to the
+      # real queue would put test submissions into a real pull request.
+      INTAKE_QUEUE_BRANCH: ${INTAKE_QUEUE_BRANCH:-intake-queue-staging}
+      INTAKE_QUEUE_PATH: ${INTAKE_QUEUE_PATH:-intake-queue.json}
+    # NO `volumes:` KEY. That absence is the entire point of this profile — the queue lives
+    # in a branch in the repository, so the container is disposable.
+    #
+    # Two consequences worth knowing before you compare the modes:
+    #  - This container needs a repository-write token to serve ordinary traffic, because
+    #    every accepted submission is a commit. The persistent mode does not.
+    #  - GITHUB_BASE_BRANCH must already exist. GitHubStore.init() cuts the queue branch from
+    #    it, so if `staging` is not pushed yet this container exits at boot with
+    #    "cannot read staging: 404" rather than starting and failing later.
+
+  # =======================================================================================
+  # CADDY — TLS, the static export, and the only route to the API.
+  # =======================================================================================
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["persistent", "ephemeral"]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # The static export, served at /. Populate it BEFORE `up`: a bind mount of a missing
+      # path is created as an empty directory, so a stack that forgot the build comes up
+      # healthy and serves 404s. The build is also where EXPO_PUBLIC_INTAKE_URL is baked in —
+      # it is inlined into the bundle at build time and cannot be set from here.
+      #
+      # `./web`, not `./dist`, and the difference is load-bearing. `expo export` *replaces*
+      # its output directory rather than writing into it, and a bind mount follows the inode
+      # it was given: rebuild while the stack is up and Caddy keeps serving a directory that
+      # no longer exists, 404ing every path while the files sit correctly on the host. Even
+      # `docker compose exec caddy ls /srv` fails, with a container-breakout error that
+      # describes the symptom and not the cause. So the build writes `dist/` and deployment
+      # syncs it into `./web` (`rsync -a --delete dist/ web/`), which is never deleted and
+      # therefore never orphans the mount. Nothing needs restarting to publish.
+      - ./web:/srv:ro
+      # Certificates and ACME account keys. Without this volume Caddy re-issues on every
+      # `up`, and Let's Encrypt's rate limits are per-hostname per-week: a few redeploys and
+      # staging has no certificate until the window rolls over.
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      # Names fixed by the Caddyfile, which reads {$SITE_HOST}, {$APEX_HOST} and {$ACME_CA}. Unset,
+      # SITE_HOST leaves the site block with no address and Caddy exits rather than serving
+      # on the wrong name without a certificate.
+      SITE_HOST: ${SITE_HOST:?set SITE_HOST in .env.staging to the hostname pointed at this VPS}
+      # The domain the store builds are compiled against. Its www twin is derived in the
+      # Caddyfile. Required here so a forgotten value is a refused `up` rather than an app
+      # whose dataset and form have quietly gone. This is not the only guard, and it cannot be:
+      # a container the Docker daemon restarts after a reboot never passes through compose.
+      # The Caddyfile therefore falls back to `apex.internal` on its own, so staging keeps
+      # serving even when the apex is missing.
+      APEX_HOST: ${APEX_HOST:?set APEX_HOST in .env.staging to the domain the store builds use (freshfoodmap.app)}
+      # The default is spelled out here rather than left to the Caddyfile's own
+      # `{$ACME_CA:...}` fallback, because the two do not agree about the empty string.
+      # `.env.staging` ships `ACME_CA=` commented out, but an operator who uncomments it
+      # and leaves it blank would otherwise hand Caddy a set-but-empty variable, and a
+      # Caddyfile env default fires on *unset*, not on empty — `acme_ca` would then be a
+      # directive with no argument and Caddy would fail to parse its config. Substituting
+      # here means the value reaching Caddy is always a URL.
+      #
+      # Point it at Let's Encrypt's staging directory while DNS is still propagating:
+      # failed validations burn a per-hostname rate limit at the real CA, which turns "the
+      # A record is wrong" into an hour of waiting to find that out.
+      ACME_CA: ${ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+    depends_on:
+      # `required: false` on both, because exactly one exists in any given profile and a
+      # depends_on naming a service the active profile excludes is a hard parse error, not a
+      # warning. With it, Caddy waits for whichever intake this profile started to pass its
+      # healthcheck; without a healthy backend it does not come up at all.
+      intake:
+        condition: service_healthy
+        required: false
+      intake-ephemeral:
+        condition: service_healthy
+        required: false
+
+  # =======================================================================================
+  # BATCHING AGENT — one shot, on demand. Never a long-running service.
+  # =======================================================================================
+  #
+  #   docker compose --env-file .env.staging run --rm batch             # persistent mode
+  #   docker compose --env-file .env.staging run --rm batch-ephemeral   # ephemeral mode
+  #
+  # `run` enables the target's profile itself, so no --profile flag is needed. Both exit 0
+  # printing "nothing pending" when the queue is empty.
+  #
+  # Match the one you run to the profile that is up. They read different queues, and running
+  # the sqlite one against an ephemeral stack finds an empty database and reports nothing
+  # pending — the one failure here that looks like success.
+  #
+  # Use these services, not `docker compose run --rm intake node ... server/batch.ts`. In the
+  # persistent profile the `intake` service is deliberately given no GITHUB_TOKEN, so that
+  # invocation reads the queue, then dies on its first GitHub call. server/batch.ts does not
+  # call assertServiceEnv(), so nothing checks the token before the work starts.
+  #
+  # WHY NOT A TIMER. Nothing stops you adding cron, and for production volume you should. On
+  # staging it stays manual on purpose: a run opens a real pull request against `staging` in
+  # a real repository, so an unattended timer turns every test submission — including the
+  # deliberately malformed ones you are here to try — into repository noise somebody has to
+  # close. Batching on demand keeps the blast radius of an experiment inside the box.
+
+  batch:
+    <<: *intake-image
+    profiles: ["batch"]
+    restart: "no"
+    # The image carries a HEALTHCHECK that polls /health. This container never listens, so
+    # inheriting it would mark a perfectly successful one-shot "unhealthy" — noise in
+    # `docker ps` that trains you to ignore the column that matters on the service.
+    healthcheck:
+      disable: true
+    # Same image, different argv — the only thing that distinguishes the agent from the
+    # service. Exec form rather than `npm run intake:batch` to match the image's CMD style
+    # and keep npm out of the process tree.
+    command: ["node", "--experimental-sqlite", "--import", "tsx", "server/batch.ts"]
+    environment:
+      <<: *github-env
+      INTAKE_STORE: sqlite
+      INTAKE_DB_PATH: /data/intake.db
+      # No INTAKE_IP_SALT: the agent reads the queue and talks to GitHub. It never hashes an
+      # IP, so it needs no salt — and giving it one would imply it does.
+    volumes:
+      # The same volume the service writes to. SQLite is in WAL mode and both containers are
+      # on one host's filesystem, so concurrent access is fine; the service does not need
+      # stopping to run a batch.
+      - intake-data:/data
+
+  batch-ephemeral:
+    <<: *intake-image
+    profiles: ["batch-ephemeral"]
+    restart: "no"
+    # See `batch` above: a one-shot that never listens must not inherit the image's probe.
+    healthcheck:
+      disable: true
+    # Same image, different argv — the only thing that distinguishes the agent from the
+    # service. Exec form rather than `npm run intake:batch` to match the image's CMD style
+    # and keep npm out of the process tree.
+    command: ["node", "--experimental-sqlite", "--import", "tsx", "server/batch.ts"]
+    environment:
+      <<: *github-env
+      INTAKE_STORE: github
+      INTAKE_QUEUE_BRANCH: ${INTAKE_QUEUE_BRANCH:-intake-queue-staging}
+      INTAKE_QUEUE_PATH: ${INTAKE_QUEUE_PATH:-intake-queue.json}
+
+volumes:
+  # Only the persistent profile mounts this. Removing it (`docker compose down -v`) discards
+  # submissions that have not yet been batched into a pull request — operational state, not
+  # the data tier. Market data lives in git in both modes.
+  intake-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,12 @@
+{
+  "name": "Fresh Food Map",
+  "short_name": "Fresh Food Map",
+  "description": "Find farmers markets near you. Open data, human-verified.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF6EF",
+  "theme_color": "#2D5A27",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "64x64", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,36 @@
+:root {
+  --font-display:
+    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Segoe UI Symbol, Noto Color Emoji;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
+  --font-serif: Fraunces, Georgia, 'Times New Roman', serif;
+}
+
+/* Kraft-paper grain: a whisper of texture over every screen (web only). */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+ * Both filter panels' search fields draw their own focus state — the box border doubles in
+ * weight — so the browser's default ring would be a second, bluer indicator on top of it. The
+ * border used to go green on focus and is green at rest now, which is why the indicator is the
+ * thickness rather than the hue: green-on-green would have been no indicator at all.
+ *
+ * Scoped to these two ids on purpose. A blanket `outline: none` is how keyboard users lose
+ * the cursor across a whole app, and every other focusable thing here still has nothing but
+ * the UA ring (style guide §6 records that the project's own ring is *not built*). Remove an
+ * outline only where something visible has replaced it.
+ */
+#market-search:focus,
+#map-search:focus {
+  outline: none;
+}

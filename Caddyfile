@@ -1,0 +1,267 @@
+# Fresh Food Map — staging edge.
+#
+# Caddy is the only process on this box with a public listener. It terminates TLS for
+# SITE_HOST, serves the Expo static web export out of /srv, and forwards /intake/* to
+# the submission service over the compose network. The intake container publishes no
+# host port, so everything below is the deployment's entire attack surface.
+#
+# The hostname is not committed. SITE_HOST comes from the environment — compose reads
+# it from the operator's env file — so this file is the same on every box. Left unset,
+# the site block has no address, the file fails to parse, and Caddy exits. That is the
+# intended behaviour: a staging box that came up on the wrong name, or on no name and
+# therefore no certificate, is worse than one that did not come up, because only the
+# second kind is visible in `docker compose ps`.
+#
+# One more name is served while there is no production: APEX_HOST, the domain the store
+# builds are compiled against. It answers the two paths an installed app calls —
+# /markets.json and /intake/* — itself, and sends everything else to SITE_HOST with a 308.
+# The app's paths are served rather than redirected because a redirected POST is not
+# portable: a 301 or 302 turns it into a GET and drops the body, and Android's HTTP client
+# does not follow a 307 or 308 for a POST at all, so every Android submission would fail.
+# When production exists, the apex block becomes the site and the store builds already
+# point at it.
+{
+	# Automatic HTTPS covers the certificate for SITE_HOST and the HTTP->HTTPS
+	# redirect; the normal case needs nothing configured here. Point ACME_CA at
+	# https://acme-staging-v02.api.letsencrypt.org/directory while the DNS record is
+	# still propagating — failed validations count against a per-hostname rate limit
+	# at the production CA, and spending it turns "the A record is wrong" into an hour
+	# of waiting to discover that.
+	acme_ca {$ACME_CA:https://acme-v02.api.letsencrypt.org/directory}
+}
+
+# Everything both names serve identically — logging, headers, the dataset's CORS, the API
+# and the error pages — lives here once, so the apex cannot drift from staging on the part
+# of it an installed app actually talks to.
+(edge) {
+	# Access logs go to stdout so `docker compose logs caddy` is the whole story and
+	# nothing accumulates on a disk nobody prunes. Client addresses are masked to a
+	# /16 (v4) and /32 (v6) before they are written: the intake service stores IPs
+	# only as salted hashes precisely so a leaked file leaks nothing, and it would be
+	# incoherent to keep the plaintext one hop upstream. A /16 is still enough to see
+	# one source hammering the form, which is what these logs are for on staging.
+	log {
+		output stdout
+		format filter {
+			wrap console
+			fields {
+				request>remote_ip ip_mask 16 32
+				request>client_ip ip_mask 16 32
+			}
+		}
+	}
+
+	encode zstd gzip
+
+	# The page is entirely static — no cookies, no session, no login — so most of the
+	# usual header surface has nothing to protect. What is left is worth setting.
+	header {
+		# A week, not a year, and no includeSubDomains or preload. This is staging:
+		# the value has to be short enough that retiring the hostname or moving it
+		# behind something else does not leave browsers pinned to HTTPS on a name
+		# that no longer answers.
+		Strict-Transport-Security "max-age=604800"
+
+		X-Content-Type-Options "nosniff"
+
+		# Nothing here is meant to be embedded, and framing a submission form is how
+		# you get someone to fill it in for a page they cannot see.
+		X-Frame-Options "DENY"
+
+		# The project ships no trackers; sending the referrer to a market's own
+		# website when someone clicks through would quietly reintroduce one.
+		Referrer-Policy "no-referrer"
+
+		# geolocation stays allowed for this origin — the map and the distance sort
+		# on the list screen are built on it, and `geolocation=()` here would break
+		# "near me" with a browser-console error and no user-visible reason.
+		Permissions-Policy "geolocation=(self), camera=(), microphone=(), payment=(), interest-cohort=()"
+	}
+
+	# The dataset is readable from anywhere, and only the dataset.
+	#
+	# `data/markets.json` is ODbL open data — the whole point is that somebody else
+	# can use it — and without this a browser on any other origin cannot, because a
+	# cross-origin fetch with no Access-Control-Allow-Origin is refused before the
+	# app ever sees the bytes. That bit us in development: the app reads its CDN copy
+	# from EXPO_PUBLIC_DATA_URL, so a dev server on localhost pointed here got the
+	# refusal and fell back to its bundled copy with "couldn't load the latest
+	# markets" on screen, while the native builds — which have no origin policy —
+	# fetched it happily. One symptom, two platforms, and only one of them wrong.
+	#
+	# Scoped to the one path rather than set globally. `*` is right for a public
+	# fact file and wrong for everything else here; the pages have nothing another
+	# origin should be reading, and the intake service is a different host with its
+	# own rules. GET and HEAD only, because there is nothing to write.
+	@dataset path /markets.json
+	header @dataset {
+		Access-Control-Allow-Origin "*"
+		Access-Control-Allow-Methods "GET, HEAD"
+		# A day. The file changes when a market is merged, and a stale permission
+		# is a stale refusal — long preflight caching here buys nothing.
+		Access-Control-Max-Age "86400"
+	}
+
+	# There is deliberately no Content-Security-Policy. The export is not
+	# CSP-friendly as built: dist/index.html carries an inline <script type="module">
+	# and three inline <style> blocks (expo-reset, react-native-stylesheet,
+	# expo-generated-fonts), react-native-web injects more stylesheet rules at
+	# runtime, and the map pulls tiles, glyphs and a worker from
+	# tiles.openfreemap.org (src/constants/theme.ts). A policy strict enough to be
+	# worth having would need 'unsafe-inline' for both script-src and style-src,
+	# which is most of what it was for, plus connect-src/img-src/worker-src
+	# allowances that change whenever EXPO_PUBLIC_DATA_URL is set. Writing one that
+	# is wrong is worse than writing none: it breaks the map on staging in a way that
+	# only shows up in the console. If it is added later, add it here, against a
+	# freshly built dist/, and load every tab before believing it.
+
+	# /intake/* is the API. handle_path STRIPS the matched prefix, which is not a
+	# style preference: server/index.ts routes on `req.url === '/submit'` and
+	# `req.url === '/health'` by exact string comparison, so the service must receive
+	# /submit. With plain `handle` it would receive /intake/submit, fall through to
+	# the 404 branch, and the form would report "the service returned an unexpected
+	# error (404)" for every submission while both containers looked healthy.
+	#
+	# The client side of this contract is EXPO_PUBLIC_INTAKE_URL=https://<host>/intake
+	# at web build time — src/lib/submit.ts appends /submit itself.
+	#
+	# X-Forwarded-For: Caddy's reverse_proxy "sets or augments" this header, and
+	# "by default, the proxy will ignore their values from incoming requests, to
+	# prevent spoofing" — the global `trusted_proxies` option is documented as
+	# trusting no proxies unless configured. Nothing is configured here, because on
+	# this box Caddy *is* the first hop, so a client-supplied X-Forwarded-For is
+	# discarded and Caddy writes a header containing exactly one address: the real
+	# peer. server/client-ip.ts takes the RIGHTMOST entry, so the two agree, and a
+	# submitter cannot prepend a value to escape their own rate-limit bucket.
+	#
+	# Two ways to break that:
+	#
+	#  1. The intake container must set INTAKE_TRUSTED_PROXY_HEADER=X-Forwarded-For.
+	#     Unset, clientIp() falls back to req.socket.remoteAddress, which behind this
+	#     proxy is *Caddy's* address on the compose network — identical for every
+	#     request on earth. The whole internet then shares one bucket of 5 per hour
+	#     (intake.config.json), so the fifth submission of the hour locks out
+	#     everyone until the next one. Nothing errors; the service logs a single line
+	#     at boot saying X-Forwarded-For is ignored, and that is the only warning
+	#     anyone gets.
+	#
+	#  2. Putting Cloudflare, a load balancer or any other proxy in front of this
+	#     one without adding `servers { trusted_proxies static <their CIDRs> }` to
+	#     the global block above. Untrusted, Caddy discards the chain that upstream
+	#     built and writes the upstream edge's address instead — and every submitter
+	#     shares a bucket again, for the same reason and just as silently.
+	handle_path /intake/* {
+		reverse_proxy intake:8787
+	}
+
+	# Expo builds a not-found route; serve it rather than Caddy's bare text, but keep
+	# the status honest. `status 404` is doing real work here — file_server would
+	# otherwise answer 200 with a page that says the opposite.
+	handle_errors {
+		@not-found expression {err.status_code} == 404
+		handle @not-found {
+			rewrite * /+not-found.html
+			file_server {
+				status 404
+			}
+		}
+		# The status code is repeated as the second argument on purpose. `respond` with a
+		# body and no status answers 200, so without it a 502 from the block above — the
+		# shape a stopped intake container takes — would reach the browser as 200 with the
+		# words "502 Bad Gateway" in the body. src/lib/submit.ts branches on res.status, so
+		# the submit form would report "the service returned an unexpected error (200)"
+		# while the actual fault was that the API was down.
+		respond "{err.status_code} {err.status_text}" {err.status_code}
+	}
+}
+
+{$SITE_HOST} {
+	root * /srv
+	import edge
+
+	# Deep links into market detail. `npm run build:web` emits one HTML file per
+	# route — index.html, list.html, submit.html, +not-found.html, _sitemap.html —
+	# and for the dynamic route src/app/market/[id].tsx it emits a single file named
+	# literally `market/[id].html`, because nothing calls generateStaticParams, so
+	# Expo pre-renders the route once with the segment left unsubstituted. There is
+	# no market/<uuid>.html and there never will be one; the ids live in
+	# data/markets.json, not in the route table.
+	#
+	# So /market/<uuid> is served that file. It boots the same bundle every other
+	# page does, expo-router reads the real path from window.location, and the detail
+	# screen renders client-side. The alternative — falling back to index.html — also
+	# ends up on the right screen, but paints the map first and hydrates over it.
+	#
+	# The fallback is a `rewrite` and not the last entry of a try_files list, and
+	# this is not a preference. try_files matches with globs: `[id]` is read as a
+	# character class meaning "one i or one d", so it looks for market/i.html and
+	# market/d.html and finds neither — the one filename Expo actually emits is the
+	# one filename try_files cannot express. Verified against Caddy 2 by putting
+	# `/li[sx]t.html` in a try_files list and watching it serve list.html.
+	#
+	# try_files still runs first, so if generateStaticParams is ever added and the
+	# export starts emitting market/<id>.html per market, those win with no change
+	# here. `route` pins the order: without it Caddy sorts directives by its own
+	# table and the rewrite could land ahead of the lookup.
+	#
+	# Worth knowing before someone reports it as a bug: the pre-rendered title in
+	# that file is "Market not found", because Expo rendered the route with id
+	# literally "[id]" and no market has that id. It is replaced the moment the
+	# bundle boots and resolves the real path. It is only ever visible with
+	# JavaScript disabled or during a slow first load.
+	handle /market/* {
+		route {
+			try_files {path} {path}.html
+			@unresolved not file
+			rewrite @unresolved "/market/[id].html"
+			file_server
+		}
+	}
+
+	# Everything else. {path}.html is what makes /list and /submit resolve to
+	# list.html and submit.html — the export has no extensionless copies and no
+	# per-route directories, so without this line every tab except the map 404s.
+	# =404 rather than a rewrite: an unknown path should say so, not silently serve
+	# something that looks like it worked.
+	handle {
+		try_files {path} {path}.html {path}/index.html =404
+		file_server
+	}
+}
+
+# The domain the store builds point at (EXPO_PUBLIC_DATA_URL and EXPO_PUBLIC_INTAKE_URL in
+# eas.json), and www beside it. The web page itself is not served here yet: a person who
+# types the name lands on SITE_HOST, where the same app runs.
+#
+# 308 and not 301: a 308 keeps the method and body, so a browser POST to a path this block
+# does not answer is not quietly turned into a GET on the way. The intake path never takes
+# the redirect at all — `handle_path /intake/*` in the snippet is more specific than the
+# bare `handle` below, and Caddy tries handle blocks from most to least specific.
+#
+# Unset, APEX_HOST falls back to `apex.internal`, and that default is what keeps staging up.
+# This block used to read a bare {$APEX_HOST}, and unset that made the address `www.`, which
+# Caddy refuses with "subject does not qualify for certificate". It refuses the whole file, so
+# a missing variable for the *second* site took the first one down with it. That happened:
+# the publish timer pulled this block onto a box whose env file did not have the variable
+# yet, the running Caddy kept its old config in memory, and the next reboot, weeks later,
+# left staging down for two and a half days. docker-compose.yml does require APEX_HOST, but
+# compose never sees a container the Docker daemon restarts by itself after a reboot.
+#
+# Why `.internal` and not something else: it is reserved for private use, and Caddy issues it
+# a certificate from its own local CA without asking Let's Encrypt for anything. `.invalid`
+# and `.test` both go to the configured ACME CA and are refused there on every start.
+# Measured on caddy:2.11.4-alpine with the production ACME_CA, which is what the box runs. An
+# earlier test of this block used `local_certs` instead of ACME_CA, and that is how the
+# failure above got past it: under `local_certs`, `www.` validates.
+{$APEX_HOST:apex.internal}, www.{$APEX_HOST:apex.internal} {
+	root * /srv
+	import edge
+
+	handle /markets.json {
+		file_server
+	}
+
+	handle {
+		redir https://{$SITE_HOST}{uri} 308
+	}
+}

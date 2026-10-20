@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      # Full history, not the default shallow single commit. Both DCO steps below resolve
+      # `origin/<base_ref>`: the scope step diffs against it, and the sign-off step walks
+      # `origin/<base>..HEAD` reading every commit body. Shallow, that ref does not exist
+      # locally, `git diff origin/staging...HEAD` exits 128 with "unknown revision", and the
+      # scope step fails before it can decide whether DCO even applies — so every pull
+      # request goes red on an infrastructure error rather than on anything a contributor did.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+      - name: Validate dataset
+        run: npx tsx scripts/validate-data.ts
+      # Pure functions guarding real invariants: never auto-reject, one schema,
+      # a submitter supplies facts and never provenance. No network, no service,
+      # no env — see docs/trd.md §8 for what this does and does not cover.
+      - name: Tests
+        run: npm test
+      # The thing that actually gets deployed. Catching an export failure here
+      # beats catching it on Cloudflare during a launch.
+      - name: Web build
+        run: npx expo export -p web
+
+  # DCO is a statement about copyright in contributed *code*. The dataset is
+      # facts under ODbL, contributed through a form by people who never touch
+      # git — and the intake service cannot certify on their behalf. So a pull
+      # request that only changes data/ is exempt. Anything touching code is not,
+      # including a PR that mixes the two.
+      - name: Does this change any code?
+        id: scope
+        # Pull requests only. `github.base_ref` is empty on a push, so the guard below
+        # refuses and the job fails — which is what every push to main did, silently
+        # reporting CI red for a branch nobody was reviewing. DCO is a statement about
+        # a contribution under review; on a push there is nothing to compare against.
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          case "$BASE_REF" in
+            ''|*[!A-Za-z0-9._/-]*) echo "Refusing to run against unexpected base ref."; exit 1 ;;
+          esac
+          changed=$(git diff --name-only "origin/${BASE_REF}...HEAD")
+          if [ -z "$(echo "$changed" | grep -v '^data/' || true)" ]; then
+            echo "data_only=true" >> "$GITHUB_OUTPUT"
+            echo "Only data/ changed — DCO does not apply (see CONTRIBUTING.md)."
+          else
+            echo "data_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Every commit is signed off
+        # The event guard is repeated rather than inherited: a skipped step produces no
+        # outputs, so `steps.scope.outputs.data_only` is empty on a push and `!= 'true'`
+        # would be satisfied — running this step exactly where the one above was skipped.
+        if: github.event_name == 'pull_request' && steps.scope.outputs.data_only != 'true'
+        env:
+          # Through env, not interpolated into the script: anything the Actions
+          # template engine substitutes is expanded before the shell sees it, so
+          # a ref containing shell metacharacters would execute. Low odds here —
+          # base_ref is a branch in *this* repo, not one a contributor names —
+          # but the safe form costs nothing and removes the class outright.
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          case "$BASE_REF" in
+            ''|*[!A-Za-z0-9._/-]*) echo "Refusing to run against unexpected base ref."; exit 1 ;;
+          esac
+          missing=$(git log --no-merges --format='%H %s' \
+            "origin/${BASE_REF}..HEAD" | while read -r sha subject; do
+              git log -1 --format='%B' "$sha" | grep -qi '^Signed-off-by: .\+ <.\+@.\+>' \
+                || echo "  $(git log -1 --format='%h' "$sha") $subject"
+            done)
+          if [ -n "$missing" ]; then
+            echo "These commits have no Signed-off-by line:"
+            echo "$missing"
+            echo
+            echo "Add one with: git commit -s   (or: git rebase --signoff \"origin/$BASE_REF\")"
+            echo "See CONTRIBUTING.md — it certifies you have the right to submit under AGPL-3.0."
+            exit 1
+          fi
+          echo "All commits signed off."
