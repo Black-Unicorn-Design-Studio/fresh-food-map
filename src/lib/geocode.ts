@@ -58,7 +58,7 @@ const endpoint = (path: string) => `${GEOCODE_URL.replace(/\/$/, '')}/${path}`;
  * Identifies the application, as the usage policy requires. A stock or generic agent is
  * explicitly not enough, so this names the app and where it lives.
  */
-export const GEOCODE_USER_AGENT = 'fresh-food-map/0.1.0 (+https://freshfoodmap.app)';
+export const GEOCODE_USER_AGENT = 'fresh-food-map/1.0.0 (+https://freshfoodmap.app)';
 
 /** The policy's ceiling is one request per second. This is that, not a tuned number. */
 export const MIN_INTERVAL_MS = 1000;

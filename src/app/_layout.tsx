@@ -116,6 +116,7 @@ export default function RootLayout() {
                 route's not-found branch sets no options and would otherwise still read
                 "Market" while a found one read something else. */}
               <Stack.Screen name="market/[id]" options={{ title: 'Fresh Food Map' }} />
+              <Stack.Screen name="privacy" options={{ title: 'Privacy' }} />
             </Stack>
           </NavChrome>
         </FiltersProvider>

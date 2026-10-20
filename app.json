@@ -2,7 +2,7 @@
   "expo": {
     "name": "Fresh Food Map",
     "slug": "fresh-food-map",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "freshfoodmap",
@@ -48,7 +48,10 @@
       "reactCompiler": true
     },
     "ios": {
-      "bundleIdentifier": "app.freshfoodmap"
+      "bundleIdentifier": "app.freshfoodmap",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     }
   }
 }

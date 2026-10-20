@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { ExternalLink } from '@/components/external-link';
+import { PrivacyLink } from '@/components/privacy-link';
 import { ThemedText } from '@/components/themed-text';
 import { SOURCE_URL } from '@/constants/source';
 import { Spacing } from '@/constants/theme';
@@ -28,6 +29,7 @@ export function Attribution() {
         Market data © OpenStreetMap contributors and public open data, ODbL.
       </ThemedText>
       <ExternalLink url={SOURCE_URL} label="Free software, AGPL-3.0 — source code" />
+      <PrivacyLink />
     </View>
   );
 }
