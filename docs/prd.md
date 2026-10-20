@@ -110,7 +110,7 @@ Hobby-scale project; metrics are directional and collected without invasive anal
 - Time-to-first-result under 10s on a mid-range phone over 4G.
 - Dataset completeness, countable from `data/markets.json` at any commit: the share of markets carrying days and hours (8 of 8 today), season dates (2 of 8) and a website (7 of 8). Hours decide whether a listing is worth showing at all, and now also whether the open-now filter can say anything about it — a market with none is never open — so that share is a bar to hold rather than a number to grow. A bulk import is where it would slip.
 - Median time from a submission arriving to a decision on its pull request under 7 days. One batch has been through the pipeline so far, which is a sample of one rather than a trend.
-- External: forks and consumers of the open dataset; contributor pull requests merged. The repository is private today, so these start at zero by construction and only become measurable when it opens.
+- External: forks and consumers of the open dataset; contributor pull requests merged. The repository went public on 2026-10-20, so both start counting from that date.
 
 ## 6. Constraints & assumptions
 
