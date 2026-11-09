@@ -27,6 +27,24 @@ const parsed = MarketCollection.safeParse(raw);
 
 const errors: string[] = [];
 
+/**
+ * TRD §9's dataset budget, measured as the app carries it.
+ *
+ * The bundler inlines the parsed JSON, so what reaches a phone is the file *without* its
+ * indentation — 1.37 MB at 2,835 markets, where the committed file is 2.27 MB. The budget
+ * used to be written against the committed file, and that counted two spaces per nesting
+ * level that never ship; the indentation stays because a data pull request is read line by
+ * line. Checked here rather than left as a sentence in the TRD, so the pull request that
+ * crosses it is the one that fails.
+ */
+const BUNDLED_BUDGET_BYTES = 2_000_000;
+const bundledBytes = Buffer.byteLength(JSON.stringify(raw), "utf8");
+if (bundledBytes > BUNDLED_BUDGET_BYTES) {
+  errors.push(
+    `bundled size ${bundledBytes} bytes exceeds the ${BUNDLED_BUDGET_BYTES}-byte budget (TRD §9) — time for region-split files`,
+  );
+}
+
 if (!parsed.success) {
   for (const issue of parsed.error.issues) {
     errors.push(`${issue.path.join(".")}: ${issue.message}`);
@@ -69,4 +87,4 @@ if (errors.length > 0) {
 }
 
 const all = (raw.features ?? []) as unknown[];
-console.log(`markets.json: OK (${all.length} markets)`);
+console.log(`markets.json: OK (${all.length} markets, ${(bundledBytes / 1e6).toFixed(2)} MB bundled of ${BUNDLED_BUDGET_BYTES / 1e6} MB)`);

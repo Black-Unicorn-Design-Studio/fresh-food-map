@@ -142,7 +142,7 @@ Keep these apart. Describing an unbuilt thing as shipped is the expensive mistak
 - **Not built** — pin clustering; any time filter beyond OPEN NOW (no "open this
   weekend", no day picker); service worker and installability (a manifest sits in `public/`,
   nothing links it); component or rendering tests; most of the ingestion normalizers in
-  `scripts/ingest/` — `osm.ts` is written and has run once for Maryland, and the rest of that
+  `scripts/ingest/` — `osm.ts` is written and has run for every area the app supports (31 October 2026), and the rest of that
   directory is still plan and contract; native store builds — `eas.json` is written and
   points them at `freshfoodmap.app`, and nothing has been built or submitted.
 

@@ -8,7 +8,14 @@ direct commit. That PR *is* the review: the dataset is the only tier, and mergin
 is the only gate and the only check anything crosses, ingested or submitted — see
 [TRD §4](../../docs/trd.md#4-the-submission-pipeline).
 
-`osm.ts` is written and has run once, for Maryland. The rest of this directory is still
+`osm.ts` is written and has run for every area the app supports — all fifty US states, DC and
+Puerto Rico, the UK's four nations and Jamaica's fourteen parishes — on 31 October 2026, taking the
+dataset from 74 markets to 2,835. Its output landed as one pull request per region (US Northeast,
+South, Midwest and West, then the UK), stacked, because a single pull request of 2,761 rows is not
+something a person reviews. 68% of those rows carry no hours: the parser reads a conservative
+subset of `opening_hours` and leaves the rest empty, and an empty schedule is never open, which is
+the safe failure. Jamaica added nothing new — its parishes carry a handful of elements each, and
+the five with an address were already in the file. The rest of this directory is still
 plan and contract. `data/markets.json` now holds three provenances: hand-assembled seeds
 carrying `source: "manual"`, accepted submissions carrying `source: "community"`, and
 imported rows carrying `source: "osm"` with the element id in `source_ref`.
