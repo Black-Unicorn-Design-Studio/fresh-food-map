@@ -7,7 +7,9 @@
  */
 import {
   Camera,
+  type CameraRef,
   GeoJSONSource,
+  type GeoJSONSourceRef,
   Images,
   Layer,
   Map,
@@ -20,7 +22,9 @@ import { StyleSheet, View, type LayoutChangeEvent, type NativeSyntheticEvent } f
 
 import { MarketCallout } from '@/components/market-callout';
 import { MAP_STYLE_URL, MapFitPadding } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { nearestFeature, placeCallout } from '@/lib/callout-anchor';
+import { CLUSTER_MAX_ZOOM, CLUSTER_RADIUS, clusterDiameter } from '@/lib/clusters';
 import { type Bounds, type LatLon } from '@/lib/geo';
 import { type Market } from '@/lib/markets';
 
@@ -76,6 +80,9 @@ export function MarketMap({
   onOpenDetails,
 }: MarketMapProps) {
   const mapRef = useRef<MapRef>(null);
+  const cameraRef = useRef<CameraRef>(null);
+  const sourceRef = useRef<GeoJSONSourceRef>(null);
+  const theme = useTheme();
   /** The map's own size, for deciding whether a card would hang off an edge. */
   const [view, setView] = useState({ width: 0, height: 0 });
   /** The card's size, which is only known once it has been laid out once. */
@@ -146,7 +153,38 @@ export function MarketMap({
      * duplicate pins.
      */
     const { features, lngLat } = event.nativeEvent;
-    const id = nearestFeature(features ?? [], lngLat)?.properties?.id;
+    const nearest = nearestFeature(features ?? [], lngLat);
+    /**
+     * **A cluster zooms in; it never opens a card.** It has no market to open, and the press is
+     * the reader asking to see what is inside it. MapLibre knows the zoom at which this cluster
+     * splits, which is better than a fixed step: a fixed step either does nothing to a tight
+     * cluster or overshoots a loose one.
+     *
+     * Stopped from reaching the map as well, for the reason the pin press is below — the map's
+     * own press would otherwise close an open card on the way.
+     */
+    const clusterId = nearest?.properties?.cluster_id;
+    if (typeof clusterId === 'number') {
+      event.stopPropagation();
+      const coordinates = (nearest?.geometry as { coordinates?: unknown } | undefined)?.coordinates;
+      if (!Array.isArray(coordinates) || coordinates.length < 2) return;
+      sourceRef.current
+        ?.getClusterExpansionZoom(clusterId)
+        .then((zoomTo) =>
+          cameraRef.current?.easeTo({
+            center: [Number(coordinates[0]), Number(coordinates[1])],
+            zoom: zoomTo,
+            duration: motionMs ?? 500,
+          })
+        )
+        .catch(() => {
+          // The source changed under the press (a filter was pressed mid-flight) and the
+          // cluster no longer exists. Doing nothing is right: the reader presses again on
+          // whatever is there now.
+        });
+      return;
+    }
+    const id = nearest?.properties?.id;
     if (typeof id !== 'string') return;
     /**
      * **A pin press must not also reach the map**, or the card opens and shuts in one tap.
@@ -250,28 +288,77 @@ export function MarketMap({
       {/* Two spellings rather than one spread: `center` and `bounds` are mutually exclusive
           in CameraStop, so a conditional spread widens to a union the props reject. */}
       {bounds ? (
-        <Camera bounds={bounds} padding={MapFitPadding} duration={motionMs} />
+        <Camera ref={cameraRef} bounds={bounds} padding={MapFitPadding} duration={motionMs} />
       ) : (
-        <Camera center={[center.lon, center.lat]} zoom={zoom} duration={motionMs} />
+        <Camera ref={cameraRef} center={[center.lon, center.lat]} zoom={zoom} duration={motionMs} />
       )}
       {/* A symbol layer takes a registered image rather than a path, so the sprout the web
           map inlines as SVG is rasterised into this asset. Generated: edit the shape in
           src/constants/sprout.ts, mirror it in scripts/gen-icons.js and rerun that script.
           Do not hand-edit the PNG. */}
       <Images images={{ sprout: require('../../assets/images/pin-sprout.png') }} />
-      <GeoJSONSource id="markets" data={shape} onPress={handlePress}>
+      <GeoJSONSource
+        ref={sourceRef}
+        id="markets"
+        data={shape}
+        onPress={handlePress}
+        cluster
+        clusterRadius={CLUSTER_RADIUS}
+        clusterMaxZoom={CLUSTER_MAX_ZOOM}>
+        {/* A cluster is a disc carrying its count — see `src/lib/clusters.ts`. The number is
+            what it means, so nothing rests on the disc's colour. `tint` because pressing it is
+            an action (it zooms in), and `background` for the figure so it reads on both
+            themes: 7.5:1 in light and 6.7:1 in dark, measured. The press target is the source's own 44 pt hitbox,
+            whatever the disc's painted size. */}
+        <Layer
+          id="market-clusters"
+          type="circle"
+          filter={['has', 'point_count']}
+          paint={{
+            'circle-color': theme.tint,
+            'circle-radius': [
+              'step',
+              ['get', 'point_count'],
+              clusterDiameter(2) / 2,
+              10,
+              clusterDiameter(10) / 2,
+              100,
+              clusterDiameter(100) / 2,
+            ],
+            'circle-stroke-width': 2,
+            'circle-stroke-color': theme.backgroundElement,
+          }}
+        />
+        <Layer
+          id="market-cluster-counts"
+          type="symbol"
+          filter={['has', 'point_count']}
+          layout={{
+            // supercluster's own abbreviation; the web formats the same rule in
+            // `clusterCountText`, and a test holds the two together.
+            'text-field': ['get', 'point_count_abbreviated'],
+            // One of the three faces the map style's glyph server carries. Anything else
+            // renders no text at all, silently.
+            'text-font': ['Noto Sans Bold'],
+            'text-size': 13,
+            'text-allow-overlap': true,
+            'text-ignore-placement': true,
+          }}
+          paint={{ 'text-color': theme.background }}
+        />
         {/* Every pin is identical. The map answers "where are the markets"; trust is carried
             by merging, not by a per-listing grade — which is also why nothing here
             depends on telling two pin colours apart. */}
         <Layer
           id="market-pins"
           type="symbol"
+          filter={['!', ['has', 'point_count']]}
           layout={{
             'icon-image': 'sprout',
             // Drawn at 3x so it stays crisp on dense displays.
             'icon-size': 1 / 3,
-            // Markets in the same town must not silently vanish; clustering is the real
-            // answer to crowding and is not built yet.
+            // Clustering absorbs crowding now, so what overlap is left is a handful of pins
+            // past the cluster zoom — and those must still not silently vanish.
             'icon-allow-overlap': true,
           }}
         />
