@@ -410,15 +410,27 @@ async function main() {
   // Never displace a hand-checked row. A name already in the file within 100m is
   // the same market — the rule intake already applies to submissions.
   const existing = current.features;
-  const fresh = kept.filter((f: any) => {
-    const dupe = existing.find(
-      (e) =>
-        e.properties.name.toLowerCase() === f.properties.name.toLowerCase() &&
-        haversineMeters(e.geometry.coordinates as [number, number], f.geometry.coordinates) < 100,
-    );
-    if (dupe) note("already in the dataset");
-    return !dupe;
-  });
+  const ids = new Set(existing.map((e) => e.properties.id));
+  const sameMarket = (a: any, b: any) =>
+    a.properties.name.toLowerCase() === b.properties.name.toLowerCase() &&
+    haversineMeters(a.geometry.coordinates, b.geometry.coordinates) < 100;
+  const fresh: any[] = [];
+  for (const f of kept as any[]) {
+    // The same element again — renamed upstream since the last run, so the name check misses
+    // it, but its id is derived from the OSM ref and would collide.
+    if (ids.has(f.properties.id)) { note("already in the dataset"); continue; }
+    if (existing.some((e) => sameMarket(e, f))) { note("already in the dataset"); continue; }
+    /**
+     * **Against this run's own rows too, not only the file's.** OSM often maps one market twice
+     * — a node for the stall and a way for the lot, or two mappers a year apart — and both pass
+     * every check above because neither is in the dataset yet. `validate-data.ts` then rejects
+     * the pair as a likely duplicate. Measured: Colorado's run wrote "Smith Farms farmers
+     * market" twice and failed CI. The first one seen is kept; which of two identical names
+     * survives is not a judgement worth making.
+     */
+    if (fresh.some((g) => sameMarket(g, f))) { note("duplicate within this run"); continue; }
+    fresh.push(f);
+  }
 
   console.log(`${iso}: ${elements.length} elements from Overpass`);
   for (const [why, n] of Object.entries(skipped).sort((a, b) => b[1] - a[1])) {

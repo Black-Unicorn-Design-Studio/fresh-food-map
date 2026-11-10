@@ -338,8 +338,13 @@ nobody.
 
 ## 9. Budgets
 
-- Bundled dataset ≤ 2 MB raw. At the ~800 bytes per feature the file currently averages,
-  that is about 2,600 markets; beyond it, region-split files.
+- Bundled dataset ≤ 2 MB **as bundled** — the file without its indentation, which is what the
+  bundler inlines — and `npm run validate-data` fails a pull request that crosses it. At ~480
+  bytes per feature that is about 4,100 markets; beyond it, region-split files. It used to be
+  stated against the committed file, which is kept indented because a data pull request is read
+  line by line, and that counted whitespace no phone ever receives: the OpenStreetMap import's
+  2,835 markets are 2.27 MB committed and 1.37 MB bundled. With all of them compiled in, the web
+  entry bundle is 1.10 MB gzipped, inside the budget below.
 - Map interactive < 3 s on mid-range Android over 4G. **Pin clustering is built** (`src/lib/clusters.ts`):
   both maps cluster through MapLibre's own clusterer, so a country view of two thousand markets is
   a dozen-odd discs, and on the web only what is on the loaded tiles becomes a DOM button.
