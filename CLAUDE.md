@@ -127,7 +127,10 @@ Keep these apart. Describing an unbuilt thing as shipped is the expensive mistak
   request), which has already opened and merged a real one; a `node:test` suite over the pure
   logic (schema, intake checks, batching agent, IP bucketing, how long a submission keeps its hash, geo/format/open-now, address
   geocoding, per-day hours, submit errors, boot-time env, the mark's geometry, callout
-  placement, the correction-issue URL); a containerised staging deployment (Dockerfile, compose profiles,
+  placement, the correction-issue URL, the cluster labels); **pin clustering** on both maps, through MapLibre's own
+  clusterer with one set of settings and words in `src/lib/clusters.ts` — a disc carrying its
+  count, pressed to zoom to where it splits, and on the web only the clusters and pins on the
+  loaded tiles become buttons rather than one per market; a containerised staging deployment (Dockerfile, compose profiles,
   Caddy), which also answers for `freshfoodmap.app` — the app's two paths served, everything
   else 308'd to staging — because that is the name the store builds are compiled against.
 - **Built, and easy to confuse with something that is not** — the list's search box narrows
@@ -139,7 +142,7 @@ Keep these apart. Describing an unbuilt thing as shipped is the expensive mistak
   typed and uses the result as an origin — the list sorts from it, the map frames it together
   with the nearest market, which answers the same question from a different starting point. It was the last thing on the not-built list and came cheap, because the camera and
   the sort were already written against an arbitrary point.
-- **Not built** — pin clustering; any time filter beyond OPEN NOW (no "open this
+- **Not built** — any time filter beyond OPEN NOW (no "open this
   weekend", no day picker); service worker and installability (a manifest sits in `public/`,
   nothing links it); component or rendering tests; most of the ingestion normalizers in
   `scripts/ingest/` — `osm.ts` is written and has run for every area the app supports (31 October 2026), and the rest of that

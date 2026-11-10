@@ -17,11 +17,29 @@ import {
 import { MAP_STYLE_URL, MapFitPadding } from '@/constants/theme';
 import { type MarketMapProps } from '@/components/market-map';
 import { useTheme } from '@/hooks/use-theme';
+import {
+  CLUSTER_MAX_ZOOM,
+  CLUSTER_RADIUS,
+  clusterCountText,
+  clusterDiameter,
+  clusterLabel,
+  uniqueRendered,
+} from '@/lib/clusters';
 
 /** Hit target. 16px was under the 24px minimum and the pins are the only way into a market. */
 const TARGET = 28;
 /** The painted disc inside the target. Kept small so neighbouring pins stay distinguishable. */
 const DISC = 22;
+/**
+ * A cluster's press target. Larger than a pin's, and fixed whatever the cluster holds: the
+ * painted disc grows with the count (`clusterDiameter`) but a small cluster is no easier to
+ * hit, so the target does not shrink with it.
+ */
+const CLUSTER_TARGET = 44;
+/** The source both the clusterer and the hit layer read. */
+const SOURCE_ID = 'markets';
+
+type Rendered = { marker: maplibregl.Marker; kind: 'market' | 'cluster' };
 
 /** Marks our popup so the tip rules below apply to it and to nothing maplibre adds later. */
 const POPUP_CLASS = 'ffm-market-callout';
@@ -83,7 +101,15 @@ export function MarketMap({
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<maplibregl.Marker[]>([]);
+  /**
+   * Every marker on the map, keyed `market:<uuid>` or `cluster:<id>` (`uniqueRendered`).
+   *
+   * Kept across renders and diffed rather than rebuilt: a marker still wanted after a pan or a
+   * filter is the same element, so a keyboard user's focus on it survives. Clusters do churn on
+   * zoom — MapLibre gives each zoom level its own cluster ids — which is the clusters genuinely
+   * changing, not markup being thrown away.
+   */
+  const markersRef = useRef<globalThis.Map<string, Rendered>>(new globalThis.Map());
   /**
    * The popup's own empty div, once it exists, so React can portal the card into it.
    *
@@ -176,51 +202,158 @@ export function MarketMap({
     );
   }, [bounds, motion]);
 
+  // Read inside the marker builders, which run from map events rather than from render: the
+  // theme and the motion preference they use must be the current ones, not the ones captured
+  // when the listener was attached.
+  const themeRef = useRef(theme);
+  const motionRef = useRef(motion);
+  useEffect(() => {
+    themeRef.current = theme;
+    motionRef.current = motion;
+  });
+
+  /** A market's pin: a button the size of the target, carrying a painted disc. */
+  const buildPin = (id: string, name: string) => {
+    const el = document.createElement('button');
+    el.setAttribute('aria-label', name);
+    // The button is the target; the disc is only paint. Transparent padding around a
+    // smaller disc keeps neighbouring pins visually apart while meeting the target size.
+    el.style.cssText =
+      `width:${TARGET}px;height:${TARGET}px;border-radius:50%;cursor:pointer;` +
+      'background:transparent;border:0;padding:0;display:grid;place-items:center';
+
+    // A white disc carrying a green sprout — filled leaves, not the filter disc's bars. The
+    // two marks were briefly one; at 22px over pale tiles the stroked version read as a
+    // scratch rather than a plant, so the pin keeps the filled shape and the chrome keeps
+    // the drawn one.
+    //
+    // Every pin is identical: the map shows where markets are. There is no per-listing grade
+    // anywhere — merging is the check — so no meaning rests on pin colour here, which is the
+    // simplest possible answer to "never colour alone".
+    const tint = themeRef.current.tint;
+    const disc = document.createElement('span');
+    disc.setAttribute('aria-hidden', 'true');
+    disc.style.cssText =
+      `width:${DISC}px;height:${DISC}px;box-sizing:border-box;border-radius:50%;` +
+      'background:#fff;border:1px solid rgba(0,0,0,.12);box-shadow:0 1px 4px rgba(0,0,0,.35);' +
+      'display:grid;place-items:center';
+    // Static markup, no interpolated market data.
+    disc.innerHTML =
+      `<svg viewBox="${SPROUT_VIEWBOX}" width="${DISC - 4}" height="${DISC - 4}" fill="none" ` +
+      'aria-hidden="true" focusable="false">' +
+      `<path d="${SPROUT_STEM}" stroke="${tint}" ` +
+      `stroke-width="${SPROUT_STEM_RN.thickness}" stroke-linecap="round"/>` +
+      `<path d="${SPROUT_LEAF_LEFT}" fill="${tint}"/>` +
+      `<path d="${SPROUT_LEAF_RIGHT}" fill="${tint}"/>` +
+      '</svg>';
+    el.appendChild(disc);
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onSelectRef.current(id);
+    });
+    return el;
+  };
+
+  /** Paints a cluster's disc from the current theme — at creation, and again on a scheme change. */
+  const paintCluster = (disc: HTMLElement) => {
+    const t = themeRef.current;
+    disc.style.background = t.tint;
+    disc.style.color = t.background;
+    disc.style.borderColor = t.backgroundElement;
+  };
+
+  /**
+   * A cluster: a button whose name says how many markets it holds and what pressing does, over
+   * a disc showing the count. The count is the meaning, so nothing rests on the disc's colour.
+   */
+  const buildCluster = (clusterId: number, count: number, lngLat: [number, number]) => {
+    const el = document.createElement('button');
+    el.setAttribute('aria-label', clusterLabel(count));
+    el.style.cssText =
+      `width:${CLUSTER_TARGET}px;height:${CLUSTER_TARGET}px;border-radius:50%;cursor:pointer;` +
+      'background:transparent;border:0;padding:0;display:grid;place-items:center';
+    const d = clusterDiameter(count);
+    const disc = document.createElement('span');
+    disc.setAttribute('aria-hidden', 'true');
+    disc.dataset.ffmCluster = '';
+    disc.style.cssText =
+      `width:${d}px;height:${d}px;box-sizing:border-box;border-radius:50%;border:2px solid;` +
+      'box-shadow:0 1px 4px rgba(0,0,0,.35);display:grid;place-items:center;' +
+      'font:700 13px/1 system-ui,-apple-system,sans-serif;font-variant-numeric:tabular-nums';
+    disc.textContent = clusterCountText(count);
+    paintCluster(disc);
+    el.appendChild(disc);
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const map = mapRef.current;
+      const source = map?.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
+      if (!map || !source) return;
+      // This button is about to be replaced by what the cluster splits into. Hand focus to the
+      // map's own canvas rather than letting it fall to <body>, which would send a keyboard
+      // user back to the top of the page.
+      const hadFocus = document.activeElement === el;
+      source
+        .getClusterExpansionZoom(clusterId)
+        .then((zoomTo) => {
+          map.easeTo({ center: lngLat, zoom: zoomTo, ...motionRef.current });
+          if (hadFocus) map.getCanvas().focus();
+        })
+        .catch(() => {
+          // The cluster went away mid-flight (a filter changed the data). Nothing to do: the
+          // reader presses whatever is there now.
+        });
+    });
+    return el;
+  };
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = markets.map((market) => {
-      const el = document.createElement('button');
-      el.setAttribute('aria-label', market.name);
-      // The button is the target; the disc is only paint. Transparent padding around a
-      // smaller disc keeps neighbouring pins visually apart while meeting the target size.
-      el.style.cssText =
-        `width:${TARGET}px;height:${TARGET}px;border-radius:50%;cursor:pointer;` +
-        'background:transparent;border:0;padding:0;display:grid;place-items:center';
+    const data = {
+      type: 'FeatureCollection' as const,
+      features: markets.map((m) => ({
+        type: 'Feature' as const,
+        geometry: { type: 'Point' as const, coordinates: [m.lon, m.lat] },
+        properties: { id: m.id, name: m.name },
+      })),
+    };
 
-      // A white disc carrying a green sprout — filled leaves, not the filter disc's bars. The
-      // two marks were briefly one; at 22px over pale tiles the stroked version read as a
-      // scratch rather than a plant, so the pin keeps the filled shape and the chrome keeps
-      // the drawn one.
-      //
-      // Every pin is identical: the map shows where markets are. There is no per-listing grade
-      // anywhere — merging is the check — so no meaning rests on pin colour here, which is the
-      // simplest possible answer to "never colour alone".
-      const disc = document.createElement('span');
-      disc.setAttribute('aria-hidden', 'true');
-      disc.style.cssText =
-        `width:${DISC}px;height:${DISC}px;box-sizing:border-box;border-radius:50%;` +
-        'background:#fff;border:1px solid rgba(0,0,0,.12);box-shadow:0 1px 4px rgba(0,0,0,.35);' +
-        'display:grid;place-items:center';
-      // Static markup, no interpolated market data.
-      disc.innerHTML =
-        `<svg viewBox="${SPROUT_VIEWBOX}" width="${DISC - 4}" height="${DISC - 4}" fill="none" ` +
-        'aria-hidden="true" focusable="false">' +
-        `<path d="${SPROUT_STEM}" stroke="${theme.tint}" ` +
-        `stroke-width="${SPROUT_STEM_RN.thickness}" stroke-linecap="round"/>` +
-        `<path d="${SPROUT_LEAF_LEFT}" fill="${theme.tint}"/>` +
-        `<path d="${SPROUT_LEAF_RIGHT}" fill="${theme.tint}"/>` +
-        '</svg>';
-      el.appendChild(disc);
-
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        onSelectRef.current(market.id);
-      });
-      return new maplibregl.Marker({ element: el }).setLngLat([market.lon, market.lat]).addTo(map);
-    });
+    /**
+     * Brings the markers into line with what the clusterer says is on the map now.
+     *
+     * Only what MapLibre reports for the loaded tiles gets an element — clusters at a country
+     * view, single pins in a town — where every market used to get one whether or not it was
+     * anywhere near the screen. That was cheap at seventy markets and is two thousand buttons
+     * after the OpenStreetMap import.
+     */
+    const sync = () => {
+      if (!map.getSource(SOURCE_ID) || !map.isSourceLoaded(SOURCE_ID)) return;
+      const wanted = uniqueRendered(map.querySourceFeatures(SOURCE_ID));
+      const current = markersRef.current;
+      for (const [key, rendered] of current) {
+        if (!wanted.has(key)) {
+          rendered.marker.remove();
+          current.delete(key);
+        }
+      }
+      for (const [key, feature] of wanted) {
+        if (current.has(key)) continue;
+        // Every feature in this source is a point, cluster or market alike.
+        const coordinates = (feature.geometry as GeoJSON.Point).coordinates;
+        const lngLat: [number, number] = [coordinates[0], coordinates[1]];
+        const p = feature.properties as Record<string, unknown>;
+        const isCluster = key.startsWith('cluster:');
+        const el = isCluster
+          ? buildCluster(Number(p.cluster_id), Number(p.point_count), lngLat)
+          : buildPin(String(p.id), String(p.name));
+        const marker = new maplibregl.Marker({ element: el }).setLngLat(lngLat).addTo(map);
+        current.set(key, { marker, kind: isCluster ? 'cluster' : 'market' });
+      }
+      syncOffscreen();
+    };
 
     // maplibre appends every marker once and thereafter only transforms it, and the map
     // clips overflow — so a pin scrolled out of view stayed a focusable, announcing tab
@@ -228,39 +361,90 @@ export function MarketMap({
     // tabIndex alone is not enough: it leaves the element reachable in browse mode.
     const syncOffscreen = () => {
       const bounds = map.getBounds();
-      for (const marker of markersRef.current) {
+      for (const { marker } of markersRef.current.values()) {
         const el = marker.getElement();
         const onScreen = bounds.contains(marker.getLngLat());
         el.tabIndex = onScreen ? 0 : -1;
-        el.toggleAttribute('aria-hidden', !onScreen);
+        // `"true"`, never the bare attribute. `toggleAttribute` wrote `aria-hidden=""`, which is
+        // not a valid value: axe raises it as `aria-valid-attr-value` (an *incomplete*, so it
+        // never showed in a violations count), and the ARIA spec reads an invalid value as its
+        // default — `undefined`, not hidden. It went unnoticed while every pin was usually on
+        // screen; with clusters spread across a country, most of them are not.
+        if (onScreen) el.removeAttribute('aria-hidden');
+        else el.setAttribute('aria-hidden', 'true');
       }
     };
-    syncOffscreen();
-    // moveend covers pan, zoom and resize.
+
+    const apply = () => {
+      const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
+      if (source) {
+        source.setData(data);
+      } else {
+        map.addSource(SOURCE_ID, {
+          type: 'geojson',
+          data,
+          cluster: true,
+          clusterRadius: CLUSTER_RADIUS,
+          clusterMaxZoom: CLUSTER_MAX_ZOOM,
+        });
+        // A layer that paints nothing. MapLibre only builds the tiles of a source some layer
+        // reads, and `querySourceFeatures` only answers from built tiles — so without it the
+        // clusterer never runs and `sync` finds an empty map. The markers above are what the
+        // reader sees and presses.
+        map.addLayer({
+          id: 'markets-tiles',
+          type: 'circle',
+          source: SOURCE_ID,
+          paint: { 'circle-radius': 0, 'circle-opacity': 0 },
+        });
+      }
+    };
+
+    if (map.isStyleLoaded()) apply();
+    else map.once('load', apply);
+    // Every frame while the map moves, so clusters split and merge with the zoom rather than
+    // jumping when the gesture ends. Cheap: `sync` touches the DOM only for what changed.
+    map.on('render', sync);
     map.on('moveend', syncOffscreen);
     return () => {
+      map.off('load', apply);
+      map.off('render', sync);
       map.off('moveend', syncOffscreen);
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
     };
     // theme is deliberately absent: recolouring happens in place below, because rebuilding
     // markers on an OS colour-scheme change would drop focus.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markets]);
 
+  // Markers are removed with the map, not with each data change: the diff in `sync` handles
+  // that, and keeping them is what keeps focus.
+  useEffect(
+    () => () => {
+      markersRef.current.forEach(({ marker }) => marker.remove());
+      markersRef.current.clear();
+    },
+    []
+  );
+
   // Recolour in place rather than rebuilding: tearing markers down would drop keyboard
   // focus. Pins previously read the light palette unconditionally and did not follow dark
   // mode at all.
   useEffect(() => {
-    for (const marker of markersRef.current) {
-      const svg = marker.getElement().querySelector('svg');
+    for (const { marker, kind } of markersRef.current.values()) {
+      const el = marker.getElement();
+      if (kind === 'cluster') {
+        const disc = el.querySelector('[data-ffm-cluster]') as HTMLElement | null;
+        if (disc) paintCluster(disc);
+        continue;
+      }
+      const svg = el.querySelector('svg');
       if (!svg) continue;
       const [stem, leafLeft, leafRight] = Array.from(svg.querySelectorAll('path'));
       stem?.setAttribute('stroke', theme.tint);
       leafLeft?.setAttribute('fill', theme.tint);
       leafRight?.setAttribute('fill', theme.tint);
     }
-  }, [theme.tint]);
+  }, [theme.tint, theme.background, theme.backgroundElement]);
 
   // The summary card, anchored to the selected pin.
   //
