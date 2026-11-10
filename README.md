@@ -218,8 +218,6 @@ data is the contribution that does reach users.
 
 Things a reader might reasonably expect to find and won't:
 
-- **Pin clustering.** Above roughly 200 points in the viewport the map will need it
-  ([TRD §9](docs/trd.md#9-budgets)). It isn't there.
 - **Ingestion normalizers.** [`scripts/ingest/README.md`](scripts/ingest/README.md) holds
   the plan and the contract, and records why the USDA portal was ruled out as a source. The
   markets in the file today were hand-assembled or submitted.
